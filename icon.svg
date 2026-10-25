@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#1C6770"/>
+  <!-- Moneda entrando en la hucha -->
+  <circle cx="256" cy="150" r="62" fill="#E09B33"/>
+  <circle cx="256" cy="150" r="40" fill="none" stroke="#FCEFD9" stroke-width="12"/>
+  <!-- Hucha (caja redondeada con ranura) -->
+  <rect x="96" y="222" width="320" height="200" rx="56" fill="#FFFFFF"/>
+  <rect x="196" y="244" width="120" height="22" rx="11" fill="#1C6770"/>
+  <!-- Corazón: protección -->
+  <path d="M256 398 C 196 362 170 334 170 308 C 170 288 186 274 206 274 C 228 274 246 288 256 306 C 266 288 284 274 306 274 C 326 274 342 288 342 308 C 342 334 316 362 256 398 Z" fill="#1C6770"/>
+</svg>

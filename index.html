@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Calcula cuánto te ahorras en la renta metiendo dinero en el patrimonio protegido de tu hijo con discapacidad y cuánto tendrá él con los años. Una herramienta de N.A.N.A.">
+<meta name="theme-color" content="#1C6770">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Patrimonio">
+<meta property="og:title" content="Calculadora del patrimonio protegido · N.A.N.A.">
+<meta property="og:description" content="Cuánto te ahorras en la renta y cuánto tendrá tu hijo con discapacidad.">
+<meta property="og:image" content="icon-512.png">
+<title>Calculadora del patrimonio protegido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Atkinson+Hyperlegible+Next:wght@400;700&display=swap">
+<style>
+/* Layout: una columna en móvil; en escritorio, preguntas a la izquierda y respuesta fija a la derecha */
+:root {
+  --bg: #F3F6F6;
+  --surface: #FFFFFF;
+  --fg: #16272A;
+  --muted: #586A6D;
+  --line: #D5DFE0;
+  --accent: #1C6770;
+  --accent-soft: #E1EFF0;
+  --money: #1C6770;
+  --growth: #8DC496;
+  --tax: #D88F22;
+  --tax-soft: #FCEFD9;
+  --warn-bg: #FFF4E0;
+  --warn-fg: #6B4508;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1A1C; --surface: #172629; --fg: #E6EEEF; --muted: #9DB0B3; --line: #2A3D41;
+    --accent: #5DBAC3; --accent-soft: #1D3539; --money: #4FB0BA; --growth: #7DBF86;
+    --tax: #F0B555; --tax-soft: #3A2C12; --warn-bg: #3A2C12; --warn-fg: #F6D9A2; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1A1C; --surface: #172629; --fg: #E6EEEF; --muted: #9DB0B3; --line: #2A3D41;
+  --accent: #5DBAC3; --accent-soft: #1D3539; --money: #4FB0BA; --growth: #7DBF86;
+  --tax: #F0B555; --tax-soft: #3A2C12; --warn-bg: #3A2C12; --warn-fg: #F6D9A2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+/* Ocultar de verdad lo que lleva el atributo hidden, aunque tenga display propio */
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap {
+  max-width: 1100px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+  display: grid; gap: 28px;
+}
+header { display: grid; gap: 10px; max-width: 66ch; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+h1 { font-family: var(--font-display); font-size: clamp(28px, 6vw, 42px); line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 21px; line-height: 1.2; margin: 0; text-wrap: balance; }
+h3 { font-size: 16px; margin: 0; }
+p { margin: 0; }
+header p { color: var(--muted); font-size: 17px; }
+.grid { display: grid; gap: 20px; }
+@media (min-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); align-items: start; }
+  .results { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); }
+}
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: grid; gap: 22px; min-width: 0; }
+.step { display: grid; gap: 12px; }
+.step-title { display: flex; gap: 10px; align-items: baseline; }
+.step-n { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--surface); font-weight: 700; display: grid; place-items: center; font-size: 15px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+label, .lbl { font-size: 15px; font-weight: 700; display: block; margin-bottom: 6px; }
+.help { font-size: 14px; color: var(--muted); }
+input[type=number], select {
+  width: 100%; font: inherit; font-size: 16px; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-height: 46px;
+  font-variant-numeric: tabular-nums;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible, .opt input:focus-visible + .opt-body {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+.suffix { position: relative; }
+.suffix input { padding-right: 34px; }
+.suffix::after { content: "€"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.suffix.years::after { content: "años"; }
+.suffix.pctx::after { content: "%"; }
+.suffix.years input { padding-right: 52px; }
+
+/* Explicaciones desplegables */
+details.info { background: var(--accent-soft); border-radius: 10px; padding: 0 12px; font-size: 14.5px; }
+details.info > summary { cursor: pointer; color: var(--accent); font-weight: 700; padding: 10px 0; list-style: none; }
+details.info > summary::-webkit-details-marker { display: none; }
+details.info > summary::before { content: "+ "; }
+details.info[open] > summary::before { content: "– "; }
+details.info .body { display: grid; gap: 8px; padding-bottom: 12px; }
+details.info ul, details.info ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.tramos { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tramos td, .tramos th { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+.tramos td:last-child, .tramos th:last-child { text-align: right; }
+
+.people { display: grid; gap: 14px; }
+.person { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 12px; background: var(--bg); }
+.person-head { display: flex; gap: 8px; align-items: center; }
+.person-head select { flex: 1; }
+.btn-x { border: none; background: transparent; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; padding: 8px; border-radius: 8px; min-height: 44px; }
+.btn-x:hover { color: var(--fg); background: var(--accent-soft); }
+.btn-add { font: inherit; font-weight: 700; color: var(--accent); background: var(--accent-soft); border: 1px dashed var(--accent); border-radius: 10px; padding: 10px 14px; cursor: pointer; min-height: 46px; }
+.btn-add[disabled] { opacity: .5; cursor: not-allowed; }
+.switch { display: flex; gap: 6px; flex-wrap: wrap; }
+.switch button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 38px; }
+.switch button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 700; }
+.tipo-out { font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.tipo-out b { font-variant-numeric: tabular-nums; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; }
+.check input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.check label { font-weight: 400; margin: 0; }
+
+.opts { display: grid; gap: 8px; }
+.opt { display: block; cursor: pointer; font-weight: 400; margin: 0; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.opt-body { display: grid; gap: 2px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--surface); }
+.opt-top { display: flex; justify-content: space-between; gap: 10px; font-weight: 700; }
+.opt-top .pct { font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+.opt-desc { font-size: 14px; color: var(--muted); }
+.opt input:checked + .opt-body { border: 2px solid var(--accent); background: var(--accent-soft); padding: 9px 13px; }
+.example-tag { justify-self: start; font-size: 13px; font-weight: 700; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 3px 12px; }
+
+/* Resultados */
+.res-block { display: grid; gap: 12px; }
+.res-label { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.lines { display: grid; gap: 10px; }
+.line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.line:last-child { border-bottom: none; padding-bottom: 0; }
+.line .t { font-size: 16px; }
+.line .t small { display: block; color: var(--muted); font-size: 13.5px; }
+.line .v { font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.line.hi .v { font-family: var(--font-display); font-size: 28px; color: var(--tax); }
+.line.hi2 .v { font-family: var(--font-display); font-size: 28px; color: var(--money); }
+/* Botón de información y ventana con la explicación */
+.info-btn { justify-self: start; display: flex; align-items: center; gap: 12px; text-align: left; font: inherit; color: var(--fg); background: var(--surface); border: 2px solid var(--accent); border-radius: 14px; padding: 12px 18px 12px 12px; cursor: pointer; max-width: 100%; }
+.info-btn:hover { background: var(--accent-soft); }
+.info-btn b { display: block; font-size: 16px; }
+.info-btn small { display: block; font-size: 14px; color: var(--muted); }
+.info-i { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-family: Georgia, serif; font-style: italic; font-weight: 700; font-size: 20px; }
+.modal { position: fixed; inset: 0; z-index: 50; background: rgba(10, 24, 27, .62); display: grid; place-items: center;
+  padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); }
+.modal-box { background: var(--surface); color: var(--fg); border-radius: 18px; width: min(560px, 100%); max-height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: 12px; padding: 16px; overflow: hidden; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.modal-head h2 { font-size: 19px; }
+.modal-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font-size: 18px; cursor: pointer; }
+.slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; scrollbar-width: none; min-height: 0; border-radius: 12px; }
+.slides::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; scroll-snap-align: center; display: grid; place-items: center; min-height: 0; }
+.slide img { display: block; width: auto; max-width: 100%; max-height: min(62vh, 640px); height: auto; border-radius: 12px; background: var(--bg); }
+.slide .alt { font-size: 15px; padding: 8px; }
+.canva-wrap { position: relative; width: min(100%, calc(62vh * 0.75)); aspect-ratio: 3 / 4; max-width: 100%; justify-self: center; border-radius: 12px; overflow: hidden; background: var(--bg); }
+.canva-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.modal-box { overflow-y: auto; }
+.modal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.nav-btn { font: inherit; font-weight: 700; font-size: 15px; color: var(--accent); background: var(--accent-soft); border: none; border-radius: 10px; padding: 10px 14px; cursor: pointer; min-height: 44px; }
+.nav-btn[disabled] { opacity: .35; cursor: default; }
+.dots { display: flex; gap: 6px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+.start-btn { font: inherit; font-weight: 700; font-size: 16px; color: var(--surface); background: var(--accent); border: none; border-radius: 12px; padding: 12px; cursor: pointer; min-height: 48px; }
+@media (max-width: 420px) { .nav-btn { padding: 10px; font-size: 14px; } }
+
+/* Enlace que lleva al paso 3 */
+.jump { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 14px; font-weight: 700; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; min-height: 32px; }
+.jump::before { content: "↑"; text-decoration: none; display: inline-block; }
+.step:focus { outline: none; }
+.step.flash { animation: flash 1.6s ease-out; border-radius: 12px; }
+@keyframes flash { 0%, 30% { box-shadow: 0 0 0 4px var(--accent); background: var(--accent-soft); } 100% { box-shadow: 0 0 0 4px transparent; background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .step.flash { animation: none; box-shadow: 0 0 0 3px var(--accent); } }
+.line .t { min-width: 0; }
+.line .t .jump { display: flex; }
+.summary { font-family: var(--font-display); font-size: clamp(20px, 4.6vw, 25px); line-height: 1.3; text-wrap: balance; }
+.summary b { font-variant-numeric: tabular-nums; }
+.summary .c-tax { color: var(--tax); }
+.summary .c-kid { color: var(--money); }
+
+/* Recorrido del dinero: Hacienda → padres → hucha */
+.flow { display: grid; justify-items: start; }
+.node { font-weight: 700; font-size: 16px; padding: 8px 16px; border-radius: 999px; border: 2px solid var(--c); color: var(--fg); background: var(--surface); }
+.n-tax { --c: var(--tax); } .n-par { --c: var(--fg); } .n-kid { --c: var(--money); background: var(--accent-soft); }
+.arrow { position: relative; margin-left: 28px; padding: 10px 0 14px 22px; border-left: 3px solid var(--c); display: grid; gap: 0; }
+.arrow::after { content: ""; position: absolute; left: -9px; bottom: -2px; border-left: 7.5px solid transparent; border-right: 7.5px solid transparent; border-top: 10px solid var(--c); }
+.a-tax { --c: var(--tax); } .a-money { --c: var(--money); }
+.arrow .at { font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; }
+.arrow small { color: var(--muted); font-size: 13.5px; }
+
+.taxbox { background: var(--tax-soft); border-radius: 12px; padding: 16px; display: grid; gap: 10px; }
+.kidbox { background: var(--accent-soft); border-radius: 12px; padding: 16px; display: grid; gap: 10px; }
+.sentence { font-size: 17px; }
+.sentence b { font-variant-numeric: tabular-nums; }
+.persons-out { display: grid; gap: 8px; font-size: 14.5px; border-top: 1px solid var(--line); padding-top: 10px; }
+.persons-out:empty { display: none; }
+.persons-out div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
+.persons-out div span:last-child { text-align: right; white-space: nowrap; }
+@media (max-width: 420px) {
+  .persons-out div { grid-template-columns: 1fr; }
+  .persons-out div span:last-child { text-align: left; color: var(--muted); }
+}
+.persons-out b { font-variant-numeric: tabular-nums; }
+
+/* Bloque de contacto */
+.cta { background: var(--accent); color: var(--surface); border-radius: var(--r); padding: 22px 20px; display: grid; gap: 14px; }
+.cta h2 { color: var(--surface); }
+.cta p { max-width: 62ch; }
+.cta-ways { display: flex; flex-wrap: wrap; gap: 10px; }
+.cta-way { display: flex; align-items: center; gap: 10px; background: var(--surface); color: var(--fg); border-radius: 12px; padding: 8px 8px 8px 14px; min-width: 0; }
+.cta-way .k { font-size: 12px; color: var(--muted); display: block; line-height: 1.2; }
+.cta-way a, .cta-way .val { color: var(--fg); font-weight: 700; text-decoration: none; user-select: all; overflow-wrap: anywhere; }
+.copy { font: inherit; font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: var(--bg); color: var(--accent); border-radius: 8px; padding: 6px 10px; cursor: pointer; min-height: 36px; flex: none; }
+.mini-cta { font-size: 14.5px; }
+.mini-cta a { color: var(--accent); font-weight: 700; }
+
+.chart-wrap { overflow-x: auto; }
+svg.chart { display: block; width: 100%; height: auto; min-width: 300px; }
+.chart .money { fill: var(--money); } .chart .growth { fill: var(--growth); }
+.chart .grid-l { stroke: var(--line); stroke-width: 1; }
+.chart text { fill: var(--muted); font-family: var(--font-body); font-size: 12px; font-variant-numeric: tabular-nums; }
+.chart .hit { fill: transparent; cursor: pointer; }
+.chart .sel { fill: var(--fg); opacity: .07; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; background: var(--c); display: inline-block; }
+.point { font-size: 14px; min-height: 2.6em; }
+.point b { font-variant-numeric: tabular-nums; }
+.warns { display: grid; gap: 8px; }
+.warn { background: var(--warn-bg); color: var(--warn-fg); border-radius: 10px; padding: 10px 12px; font-size: 14.5px; }
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+table.years { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.years th, .years td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.years th:first-child, .years td:first-child { text-align: left; }
+.years th { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+details.plain { border-top: 1px solid var(--line); padding-top: 12px; }
+details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
+
+.faq { display: grid; gap: 12px; max-width: 72ch; }
+.faq details.info { background: var(--surface); border: 1px solid var(--line); font-size: 15.5px; }
+.faq details.info > summary { color: var(--fg); font-size: 16px; }
+.disclaimer { color: var(--muted); font-size: 14px; max-width: 72ch; }
+.contact { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 15px; align-items: baseline; }
+.contact span { user-select: all; font-weight: 700; }
+.err { color: var(--warn-fg); background: var(--warn-bg); padding: 10px 12px; border-radius: 10px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">N.A.N.A. · Patrimonio protegido</span>
+    <h1>Calculadora del patrimonio protegido</h1>
+    <p>El patrimonio protegido es como una <b>hucha especial a nombre de tu hijo o hija con discapacidad</b>. El dinero que metes en ella es suyo, para sus necesidades, y a cambio Hacienda te devuelve una parte en la declaración de la renta. Responde a tres preguntas y verás cuánto te ahorras y cuánto dinero tendrá tu hijo.</p>
+    <button type="button" class="info-btn" id="infoBtn" aria-haspopup="dialog">
+      <span class="info-i" aria-hidden="true">i</span>
+      <span><b>¿Es la primera vez que oyes hablar de esto?</b><small>Mira en 1 minuto qué es un patrimonio protegido</small></span>
+    </button>
+  </header>
+
+  <div class="grid">
+    <form class="panel" id="form" autocomplete="off">
+      <span class="example-tag" id="exampleTag">Ahora ves un ejemplo. Cambia los datos por los tuyos.</span>
+
+      <!-- Paso 1 -->
+      <div class="step">
+        <div class="step-title"><span class="step-n">1</span><h2>Tu hijo o hija</h2></div>
+        <div class="row2">
+          <div>
+            <label for="edadActual">Edad que tiene ahora</label>
+            <div class="suffix years"><input type="number" id="edadActual" min="0" max="64" step="1" value="8" inputmode="numeric"></div>
+          </div>
+          <div>
+            <label for="edadFin">Meteréis dinero hasta los</label>
+            <div class="suffix years"><input type="number" id="edadFin" min="1" max="65" step="1" value="18" inputmode="numeric"></div>
+          </div>
+        </div>
+        <details class="info">
+          <summary>¿Puede tener mi hijo un patrimonio protegido?</summary>
+          <div class="body">
+            <p>Sí, si tiene reconocida una de estas discapacidades:</p>
+            <ul>
+              <li><b>Psíquica o intelectual</b> (por ejemplo, autismo) de un <b>33 % o más</b>.</li>
+              <li><b>Física o sensorial</b> de un <b>65 % o más</b>.</li>
+            </ul>
+            <p>Lo dice su certificado de discapacidad. No importa la edad: se puede abrir desde que es un bebé.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="step">
+        <div class="step-title"><span class="step-n">2</span><h2>Quién mete dinero en la hucha</h2></div>
+        <p class="help">Puede ser una persona o varias: madre, padre, abuelos, tíos… Cada una se ahorra impuestos en su propia renta.</p>
+        <div class="people" id="people"></div>
+        <button type="button" class="btn-add" id="addBtn">+ Añadir otra persona</button>
+        <div class="check" id="conjuntaWrap">
+          <input type="checkbox" id="conjunta">
+          <label for="conjunta">Las dos primeras personas hacen la <b>declaración de la renta conjunta</b> (una sola declaración para los dos).</label>
+        </div>
+        <details class="info">
+          <summary>¿Qué cambia si hacemos la renta conjunta?</summary>
+          <div class="body">
+            <p>Cada persona puede descontarse hasta <b>10.000 € al año</b>. Pero si la pareja hace <b>una sola declaración</b> (conjunta), ese límite de 10.000 € es para los dos juntos.</p>
+            <p>Si pensáis meter más de 10.000 € entre los dos, puede compensar hacer cada uno su declaración por separado. Un gestor os puede decir qué os sale mejor.</p>
+          </div>
+        </details>
+      </div>
+
+      <!-- Paso 3 -->
+      <div class="step" id="paso3" tabindex="-1">
+        <div class="step-title"><span class="step-n">3</span><h2>Qué hacéis con el dinero dentro</h2></div>
+        <p class="help">El dinero de la hucha puede quedarse quieto en la cuenta o invertirse para que crezca. Elige una opción:</p>
+        <div class="opts" id="opts" role="radiogroup" aria-label="Qué hacéis con el dinero"></div>
+        <details class="info">
+          <summary>¿De dónde salen estos porcentajes?</summary>
+          <div class="body">
+            <p>La <b>rentabilidad</b> es cuánto crece el dinero cada año. Si metes 100 € y la rentabilidad es del 4 %, al año siguiente tienes 104 €. Al año siguiente crece también lo ganado, y por eso el efecto aumenta con los años.</p>
+            <ul>
+              <li><b>Cuenta (0 %)</b>: el banco no paga nada. El dinero no sube ni baja, aunque con la subida de precios (inflación) cada año compra un poco menos.</li>
+              <li><b>Depósito o fondo monetario (≈ 2 %)</b>: es lo que suelen pagar los bancos por dinero casi sin riesgo. Cambia según los tipos de interés del momento.</li>
+              <li><b>Fondo mixto (≈ 4 %)</b>: mezcla de bolsa y de productos seguros. Es una media aproximada de lo que han dado estos fondos en el pasado.</li>
+              <li><b>Fondo de bolsa mundial (≈ 6 %)</b>: invierte en miles de empresas de todo el mundo. A largo plazo, durante décadas, la bolsa mundial ha subido de media entre un 7 % y un 8 % al año; le restamos las comisiones del fondo. Hay años en que baja un 20 % o un 30 %, así que es solo para dinero que no se va a tocar en muchos años.</li>
+            </ul>
+            <p>Son <b>medias del pasado</b>, no promesas. Nadie puede asegurar lo que pasará. Por eso la calculadora también te muestra qué pasaría si el resultado fuera la mitad de bueno.</p>
+          </div>
+        </details>
+      </div>
+    </form>
+
+    <!-- Resultados -->
+    <section class="panel results" aria-live="polite">
+      <div id="errorBox" class="err" hidden></div>
+      <div id="out" style="display:grid;gap:22px">
+
+        <div class="res-block">
+          <span class="res-label">En resumen</span>
+          <p class="summary" id="summary"></p>
+        </div>
+
+        <div class="flow" aria-label="Cómo se mueve el dinero cada año">
+          <div class="node n-tax">Hacienda</div>
+          <div class="arrow a-tax"><span class="at" id="flowTax">—</span><small>en la declaración de la renta</small></div>
+          <div class="node n-par" id="flowPar">Vosotros, los padres</div>
+          <div class="arrow a-money"><span class="at" id="flowMoney">—</span><small>el dinero pasa a ser suyo, para sus necesidades</small></div>
+          <div class="node n-kid">La hucha de vuestro hijo</div>
+        </div>
+
+        <div class="res-block taxbox">
+          <span class="res-label" id="parLabel">Lo que ganáis vosotros, los padres</span>
+          <div class="lines">
+            <div class="line"><span class="t">Metéis en la hucha cada año</span><span class="v" id="rAporta">—</span></div>
+            <div class="line hi"><span class="t">Hacienda os devuelve cada año<small>Pagáis menos en la declaración de la renta</small></span><span class="v" id="rAhorro">—</span></div>
+            <div class="line"><span class="t">Por eso, de verdad os cuesta cada año<small>Lo que metéis menos lo que os devuelven</small></span><span class="v" id="rCoste">—</span></div>
+            <div class="line"><span class="t" id="rAhorroTotK">En total, Hacienda os habrá devuelto</span><span class="v" id="rAhorroTot">—</span></div>
+          </div>
+          <div class="persons-out" id="personsOut"></div>
+        </div>
+
+        <div class="res-block kidbox">
+          <span class="res-label">Lo que gana vuestro hijo</span>
+          <div class="lines">
+            <div class="line"><span class="t">Recibe cada año<small id="rRecibeNote">Sin pagar impuestos por recibirlo</small></span><span class="v" id="rRecibe">—</span></div>
+            <div class="line"><span class="t" id="rCuentaK">Si el dinero se queda en la cuenta</span><span class="v" id="rCuenta">—</span></div>
+            <div class="line hi2" id="lineInv"><span class="t" id="rInvK">Si se invierte</span><span class="v" id="rInv">—</span></div>
+            <div class="line" id="linePes"><span class="t">Si la inversión va peor de lo esperado<small>Con la mitad de rentabilidad</small></span><span class="v" id="rPes">—</span></div>
+          </div>
+          <p class="sentence" id="kidSentence"></p>
+        </div>
+
+        <div style="display:grid;gap:8px">
+          <h3>Cómo crece la hucha año a año</h3>
+          <div class="legend">
+            <span style="--c:var(--money)"><i></i>Dinero que habéis metido</span>
+            <span style="--c:var(--growth)" id="legGrowth"><i></i>Lo que ha crecido</span>
+          </div>
+          <div class="chart-wrap"><svg class="chart" id="chart" role="img" aria-label="Gráfico del dinero de la hucha según la edad del niño"></svg></div>
+          <div class="point" id="point"></div>
+        </div>
+
+        <div class="warns" id="warns"></div>
+
+        <p class="mini-cta">¿Quieres abrir el patrimonio protegido de tu hijo? <a href="#contacto">N.A.N.A. te informa</a>.</p>
+
+        <details class="plain">
+          <summary>Ver la tabla año a año</summary>
+          <div class="table-wrap"><table class="years" id="table"></table></div>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <!-- Contacto -->
+  <section class="cta" id="contacto">
+    <h2>¿Quieres abrir el patrimonio protegido de tu hijo?</h2>
+    <p>En N.A.N.A. te informamos sin compromiso: qué papeles necesitas, cómo se hace ante el notario y el banco, y qué tener en cuenta con las ayudas. Escríbenos o llámanos.</p>
+    <div class="cta-ways">
+      <div class="cta-way">
+        <span><span class="k">Correo</span><a href="mailto:nucli.nana@gmail.com" id="vMail">nucli.nana@gmail.com</a></span>
+        <button type="button" class="copy" data-copy="nucli.nana@gmail.com">Copiar</button>
+      </div>
+      <div class="cta-way">
+        <span><span class="k">Teléfono y WhatsApp</span><a href="tel:+34694587000" id="vTel">694 58 70 00</a></span>
+        <button type="button" class="copy" data-copy="694587000">Copiar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preguntas frecuentes -->
+  <section class="faq">
+    <h2>Preguntas frecuentes</h2>
+
+    <details class="info"><summary>¿Por qué Hacienda me devuelve dinero?</summary><div class="body">
+      <p>La ley premia a las familias que guardan dinero para el futuro de una persona con discapacidad. El dinero que metes en la hucha se <b>resta de lo que has ganado</b> a efectos de impuestos.</p>
+      <p>Ejemplo: si ganas 30.000 € al año y metes 5.000 € en la hucha, Hacienda calcula tus impuestos como si hubieras ganado 25.000 €. Pagas menos impuestos y esa diferencia es tu ahorro.</p>
+      <p>No te ingresan nada cada mes: el ahorro aparece en la <b>declaración de la renta del año siguiente</b>, que te sale a devolver más o a pagar menos.</p>
+    </div></details>
+
+    <details class="info"><summary>¿Dónde veo el % de IRPF de mi nómina?</summary><div class="body">
+      <p>En tu nómina, en la parte de <b>descuentos</b> (lo que te quitan del sueldo), busca la línea <b>"Retención IRPF"</b> o simplemente <b>"IRPF"</b>. A su lado aparece un porcentaje, por ejemplo <b>14,00 %</b>. Ese es el número que pide la calculadora.</p>
+      <p>Usa una nómina de un mes normal, sin paga extra. Si este año te han cambiado el porcentaje, pon el más reciente.</p>
+    </div></details>
+
+    <details class="info"><summary>¿Por qué me ahorro más que el % de mi nómina?</summary><div class="body">
+      <p>Hacienda cobra los impuestos por tramos: los primeros euros que ganas pagan un 19 %, los siguientes un 24 %, luego un 30 %… El % de tu nómina es una <b>media</b> de todos esos tramos.</p>
+      <p>Cuando metes dinero en la hucha, Hacienda lo descuenta de tus <b>últimos euros</b>, que son los que pagan el porcentaje más alto. Por eso, aunque tu nómina diga un 14 %, por cada 100 € que metes te puedes ahorrar unos 30 €. La calculadora hace este cálculo por ti.</p>
+      <p>Para quien quiera comprobarlo con su declaración de la renta, esta es la tabla de tramos:</p>
+      <table class="tramos">
+        <thead><tr><th>Base liquidable general</th><th>Tramo más alto aprox.</th></tr></thead>
+        <tbody>
+          <tr><td>Hasta 12.450 €</td><td>19 %</td></tr>
+          <tr><td>De 12.450 a 20.200 €</td><td>24 %</td></tr>
+          <tr><td>De 20.200 a 35.200 €</td><td>30 %</td></tr>
+          <tr><td>De 35.200 a 60.000 €</td><td>37 %</td></tr>
+          <tr><td>De 60.000 a 300.000 €</td><td>45 %</td></tr>
+          <tr><td>Más de 300.000 €</td><td>47 %</td></tr>
+        </tbody>
+      </table>
+      <p><b>Dónde comprobarlo:</b></p>
+      <ol>
+        <li>Abre tu <b>última declaración de la renta</b> (en Renta Web de la Agencia Tributaria o la copia que te dio tu gestor).</li>
+        <li>Busca la cifra de la <b>"Base liquidable general"</b>.</li>
+        <li>Mira en qué fila de la tabla cae: por cada 100 € que metas en la hucha, te ahorrarás aproximadamente ese porcentaje.</li>
+      </ol>
+      <p>Los porcentajes de la tabla son aproximados: cada comunidad autónoma tiene su parte del impuesto y cambian un poco. En Cataluña, por ejemplo, suelen ser algo más altos.</p>
+    </div></details>
+
+    <details class="info"><summary>¿Dónde veo cuánto cobro al año en bruto?</summary><div class="body">
+      <p>El sueldo <b>bruto</b> es lo que cobras antes de que te quiten impuestos y Seguridad Social. No es lo que te llega al banco (eso es el neto).</p>
+      <ul>
+        <li>En el <b>certificado de retenciones</b> que te da la empresa cada año (pídelo a Recursos Humanos): busca "rendimientos íntegros del trabajo".</li>
+        <li>En tu contrato o en la nómina: el "total devengado" de cada mes, sumando todas las pagas del año (también las extra).</li>
+        <li>Si eres autónomo/a, usa tus ingresos menos tus gastos del año.</li>
+      </ul>
+      <p>Con el bruto, la calculadora estima cuánto te ahorras. Es una aproximación: si tienes otros ingresos (un alquiler, por ejemplo), puedes ahorrar algo más.</p>
+    </div></details>
+
+    <details class="info"><summary>¿El dinero es de mi hijo? ¿Lo puedo usar?</summary><div class="body">
+      <p>Sí, el dinero pasa a ser de tu hijo o hija y es para sus necesidades. Lo administráis vosotros (o quien diga la escritura).</p>
+      <ul>
+        <li><b>Se puede gastar en sus necesidades</b>: terapias, psicólogos, apoyos en el colegio, material, cuidados… Guarda las facturas.</li>
+        <li><b>No se puede sacar para otras cosas</b> durante el año en que lo metes y los cuatro siguientes. Si se hace, hay que devolver a Hacienda lo que te ahorraste.</li>
+      </ul>
+    </div></details>
+
+    <details class="info"><summary>¿Hay algún límite?</summary><div class="body">
+      <ul>
+        <li>Cada persona puede descontarse hasta <b>10.000 € al año</b>.</li>
+        <li>Entre todas las personas que aportan, hasta <b>24.250 € al año</b> para el mismo niño o niña.</li>
+        <li>Lo que metes no puede ser más que lo que has ganado ese año a efectos de impuestos.</li>
+        <li>Para seguir aplicándoos las deducciones por vuestro hijo, él no debe tener ingresos de más de 8.000 € al año. En la práctica: no vender inversiones con muchas ganancias de golpe.</li>
+      </ul>
+    </div></details>
+
+    <details class="info"><summary>¿Cómo se empieza?</summary><div class="body">
+      <ol>
+        <li>Pide cita en un <b>notario</b> y presupuesto. Lleva el DNI y el certificado de discapacidad de tu hijo.</li>
+        <li>El notario prepara la escritura del "patrimonio protegido a favor de…". Allí se dice quién lo administra.</li>
+        <li>Abre una <b>cuenta en el banco</b> solo para la hucha. Pregunta si te dejan tener fondos de inversión dentro.</li>
+        <li>Mete el dinero <b>antes del 31 de diciembre</b> para que cuente en la renta de ese año.</li>
+        <li>En la declaración de la renta, aplica la reducción por "aportaciones a patrimonios protegidos".</li>
+      </ol>
+      <p>En Cataluña, cada nueva aportación también se hace ante notario.</p>
+      <p><b>¿Necesitas ayuda?</b> Contacta con N.A.N.A. y te explicamos los pasos: <a href="#contacto">ver contacto</a>.</p>
+    </div></details>
+
+    <details class="info"><summary>¿Afecta a las ayudas que cobra mi hijo?</summary><div class="body">
+      <p>Puede afectar a algunas ayudas que miran los ingresos o el dinero de la persona, sobre todo a partir de los 18 años. Antes de empezar, consúltalo con un gestor o con la asociación.</p>
+    </div></details>
+
+    <p class="disclaimer">Esta calculadora da una <b>estimación orientativa</b>. Usa tramos de impuestos aproximados y no tiene en cuenta todas las situaciones personales. No es asesoramiento fiscal ni financiero, y las inversiones pueden subir o bajar. Antes de decidir, consultad con un asesor fiscal.</p>
+  </section>
+</div>
+
+<!-- Explicación en imágenes: ¿qué es un patrimonio protegido? -->
+<div class="modal" id="infoModal" hidden role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="infoTitle">¿Qué es un patrimonio protegido?</h2>
+      <button type="button" class="modal-x" id="infoClose" aria-label="Cerrar la explicación">✕</button>
+    </div>
+    <div class="slides" id="slides" tabindex="0" aria-label="Diapositivas. Desliza o usa los botones para pasar."></div>
+    <div class="modal-nav">
+      <button type="button" class="nav-btn" id="prevSlide">← Anterior</button>
+      <span class="dots" id="dots" aria-hidden="true"></span>
+      <button type="button" class="nav-btn" id="nextSlide">Siguiente →</button>
+    </div>
+    <button type="button" class="start-btn" id="infoStart">Entendido, empezar a calcular</button>
+  </div>
+</div>
+
+<script>
+// ===== Datos legales y supuestos: revisar cada año =====
+const CFG = {
+  limitePorPersona: 10000,      // art. 54 LIRPF
+  limiteTotal: 24250,           // art. 54 LIRPF
+  exencionHijo: 21600,          // 3 × IPREM anual (7.200 € en 2026), art. 7.w LIRPF
+  // Escala general aproximada (estatal + autonómica tipo medio)
+  tramos: [[12450, 0.19], [20200, 0.24], [35200, 0.30], [60000, 0.37], [300000, 0.45], [Infinity, 0.47]],
+  ssTrabajador: 0.065,          // cotización aprox. del trabajador
+  ssMax: 4000,                  // tope aprox. anual de cotización
+  otrosGastos: 2000,            // gastos deducibles del trabajo
+  // Mínimo personal y familiar aproximado: padres comparten el del hijo (descendiente + discapacidad 65 %)
+  minimoPadres: 5550 + (2400 + 12000) / 2,
+  minimoOtros: 5550,
+  maxPersonas: 5
+};
+const OPCIONES = [
+  { id: "cuenta",  r: 0,    t: "Se queda en la cuenta", d: "Sin riesgo. No crece." },
+  { id: "deposito", r: 0.02, t: "Depósito o fondo monetario", d: "Riesgo muy bajo. Crece poco." },
+  { id: "mixto",   r: 0.04, t: "Fondo mixto", d: "Riesgo medio. Algunos años baja un poco." },
+  { id: "bolsa",   r: 0.06, t: "Fondo de bolsa mundial", d: "Riesgo alto. Solo para muchos años sin tocarlo." }
+];
+const QUIEN = ["Madre", "Padre", "Abuela", "Abuelo", "Tía", "Tío", "Hermano/a", "Otra persona"];
+
+// Euros con punto de miles siempre (Intl en español omite el punto en cifras de 4 dígitos)
+const eur = { format: v => {
+  const n = Math.round(v), s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (n < 0 ? "-" : "") + s + " €";
+} };
+const pct = v => `${Math.round(v * 100)} %`;
+const $ = id => document.getElementById(id);
+
+let people = [
+  { quien: "Madre", aporta: 4000, modo: "nomina", irpf: 9, bruto: 26000 },
+  { quien: "Padre", aporta: 4000, modo: "nomina", irpf: 14, bruto: 34000 }
+];
+let opcion = "mixto";
+let selIdx = null;
+
+// ===== Cálculo de impuestos =====
+function cuota(base) {
+  let c = 0, prev = 0;
+  for (const [lim, t] of CFG.tramos) {
+    if (base <= prev) break;
+    c += (Math.min(base, lim) - prev) * t;
+    prev = lim;
+  }
+  return c;
+}
+function marginal(base) {
+  for (const [lim, t] of CFG.tramos) if (base <= lim) return t;
+  return CFG.tramos[CFG.tramos.length - 1][1];
+}
+function baseDesdeBruto(bruto) {
+  return Math.max(0, bruto - Math.min(bruto * CFG.ssTrabajador, CFG.ssMax) - CFG.otrosGastos);
+}
+function impuesto(base, minimo) { return Math.max(0, cuota(base) - cuota(minimo)); }
+function esPadre(q) { return q === "Madre" || q === "Padre"; }
+// El % de IRPF de la nómina es una media. A partir de él estimamos el sueldo bruto
+// y, con los tramos, el ahorro real (que se calcula sobre el tramo más alto).
+function brutoDesdeNomina(pctNomina, minimo) {
+  const r = pctNomina / 100;
+  if (r <= 0) return 0;
+  const media = b => (b > 0 ? impuesto(baseDesdeBruto(b), minimo) / b : 0);
+  let lo = 0, hi = 2000000;
+  if (media(hi) < r) return hi;
+  for (let k = 0; k < 60; k++) { const mid = (lo + hi) / 2; if (media(mid) < r) lo = mid; else hi = mid; }
+  return hi;
+}
+
+// Ahorro en un año de cada persona, aplicando los límites
+function ahorros(conjunta) {
+  let red = people.map(p => Math.min(p.aporta, CFG.limitePorPersona));
+  if (conjunta && people.length >= 2) {
+    const par = red[0] + red[1];
+    if (par > CFG.limitePorPersona) { const f = CFG.limitePorPersona / par; red[0] *= f; red[1] *= f; }
+  }
+  const tot = red.reduce((a, b) => a + b, 0);
+  if (tot > CFG.limiteTotal) { const f = CFG.limiteTotal / tot; red = red.map(x => x * f); }
+  return people.map((p, i) => {
+    const min = esPadre(p.quien) ? CFG.minimoPadres : CFG.minimoOtros;
+    const bruto = p.modo === "nomina" ? brutoDesdeNomina(p.irpf, min) : p.bruto;
+    const base = baseDesdeBruto(bruto);
+    const r = Math.min(red[i], base);
+    const ahorro = impuesto(base, min) - impuesto(base - r, min);
+    return { red: r, ahorro, tipo: marginal(base), base, sinImpuesto: impuesto(base, min) === 0 };
+  });
+}
+
+// ===== Pintar formularios =====
+function renderPeople() {
+  const box = $("people");
+  box.innerHTML = "";
+  people.forEach((p, i) => {
+    const d = document.createElement("div");
+    d.className = "person";
+    d.innerHTML = `
+      <div class="person-head">
+        <select id="q${i}" aria-label="Quién es">${QUIEN.map(q => `<option${q === p.quien ? " selected" : ""}>${q}</option>`).join("")}</select>
+        ${people.length > 1 ? `<button type="button" class="btn-x" id="del${i}">Quitar</button>` : ""}
+      </div>
+      <div>
+        <label for="a${i}">¿Cuánto mete en la hucha al año?</label>
+        <div class="suffix"><input type="number" id="a${i}" min="0" step="500" value="${p.aporta}" inputmode="numeric"></div>
+      </div>
+      <div style="display:grid;gap:8px">
+        <span class="lbl" style="margin:0">Para calcular su ahorro, dinos:</span>
+        <div class="switch" role="group" aria-label="Cómo calcular el ahorro">
+          <button type="button" id="mn${i}" aria-pressed="${p.modo === "nomina"}">El % de IRPF de mi nómina</button>
+          <button type="button" id="ms${i}" aria-pressed="${p.modo === "sueldo"}">Mi sueldo bruto al año</button>
+        </div>
+        ${p.modo === "nomina" ? `
+          <div>
+            <label for="n${i}">% de IRPF que pone en la nómina</label>
+            <div class="suffix pctx"><input type="number" id="n${i}" min="0" max="45" step="0.5" value="${p.irpf}" inputmode="decimal"></div>
+          </div>` : `
+          <div>
+            <label for="b${i}">Sueldo bruto al año</label>
+            <div class="suffix"><input type="number" id="b${i}" min="0" step="1000" value="${p.bruto}" inputmode="numeric"></div>
+          </div>`}
+        <div class="tipo-out" id="to${i}"></div>
+        <details class="info">
+          <summary>${p.modo === "nomina" ? "¿Dónde veo el % de IRPF en mi nómina?" : "¿Qué es el sueldo bruto y dónde lo veo?"}</summary>
+          <div class="body">${p.modo === "nomina"
+            ? `<p>En la parte de <b>descuentos</b> de tu nómina hay una línea llamada <b>"Retención IRPF"</b> o <b>"IRPF"</b>, con un porcentaje al lado (por ejemplo, <b>14,00 %</b>). Ese es el número que hay que poner aquí.</p>
+               <p>Si tienes paga extra, usa una nómina normal. Si no trabajas por cuenta ajena o no tienes nómina, usa la opción del sueldo bruto.</p>
+               <p><b>Ojo:</b> lo que te ahorras suele ser <b>más</b> que ese porcentaje. El % de la nómina es una media de todo tu sueldo, pero el dinero de la hucha se descuenta de tus últimos euros, que son los que más impuestos pagan. La calculadora ya tiene esto en cuenta.</p>`
+            : `<p>Es lo que cobras <b>antes</b> de impuestos y Seguridad Social, no lo que te llega al banco.</p>
+               <p>Lo encuentras en el <b>certificado de retenciones</b> que te da la empresa ("rendimientos íntegros del trabajo") o sumando el "total devengado" de todas tus nóminas del año, incluidas las pagas extra.</p>`}
+          </div>
+        </details>
+      </div>`;
+    box.appendChild(d);
+    d.querySelector(`#q${i}`).addEventListener("change", e => { p.quien = e.target.value; touched(); calc(); });
+    d.querySelector(`#a${i}`).addEventListener("input", e => { p.aporta = Math.max(0, +e.target.value || 0); touched(); calc(); });
+    d.querySelector(`#mn${i}`).addEventListener("click", () => { p.modo = "nomina"; renderPeople(); touched(); calc(); });
+    d.querySelector(`#ms${i}`).addEventListener("click", () => { p.modo = "sueldo"; renderPeople(); touched(); calc(); });
+    const b = d.querySelector(`#b${i}`); if (b) b.addEventListener("input", e => { p.bruto = Math.max(0, +e.target.value || 0); touched(); calc(); });
+    const nn = d.querySelector(`#n${i}`); if (nn) nn.addEventListener("input", e => { p.irpf = Math.min(45, Math.max(0, +String(e.target.value).replace(",", ".") || 0)); touched(); calc(); });
+    const del = d.querySelector(`#del${i}`); if (del) del.addEventListener("click", () => { people.splice(i, 1); renderPeople(); touched(); calc(); });
+  });
+  $("addBtn").disabled = people.length >= CFG.maxPersonas;
+  $("conjuntaWrap").hidden = people.length < 2;
+  if (people.length < 2) $("conjunta").checked = false;
+}
+
+function renderOpts() {
+  $("opts").innerHTML = OPCIONES.map(o => `
+    <label class="opt">
+      <input type="radio" name="opcion" value="${o.id}"${o.id === opcion ? " checked" : ""}>
+      <span class="opt-body">
+        <span class="opt-top"><span>${o.t}</span><span class="pct">${o.r === 0 ? "0 %" : "≈ " + pct(o.r) + " al año"}</span></span>
+        <span class="opt-desc">${o.d}</span>
+      </span>
+    </label>`).join("");
+  document.querySelectorAll('input[name="opcion"]').forEach(el =>
+    el.addEventListener("change", e => { opcion = e.target.value; touched(); calc(); }));
+}
+
+function touched() { $("exampleTag").hidden = true; }
+
+// ===== Resultado =====
+function grow(A, r, n) { let v = 0; const s = []; for (let y = 0; y < n; y++) { v = (v + A) * (1 + r); s.push(v); } return s; }
+
+function calc() {
+  const ini = Math.round(+$("edadActual").value);
+  const fin = Math.round(+$("edadFin").value);
+  const n = fin - ini;
+  if (!Number.isFinite(n) || n < 1 || n > 65 || ini < 0) {
+    $("errorBox").textContent = "La edad hasta la que meteréis dinero tiene que ser mayor que la edad que tiene ahora.";
+    $("errorBox").hidden = false; $("out").hidden = true; return;
+  }
+  $("errorBox").hidden = true; $("out").hidden = false;
+
+  const conjunta = $("conjunta").checked;
+  const res = ahorros(conjunta);
+  const A = people.reduce((s, p) => s + p.aporta, 0);
+  const S = res.reduce((s, x) => s + x.ahorro, 0);
+  const op = OPCIONES.find(o => o.id === opcion);
+
+  // Tipo marginal estimado por persona
+  people.forEach((p, i) => {
+    const el = $("to" + i); if (!el) return;
+    const x = res[i];
+    const sinIrpf = p.modo === "nomina" ? p.irpf <= 0 : x.sinImpuesto;
+    if (p.aporta <= 0) {
+      el.innerHTML = `Escribe cuánto mete al año para ver su ahorro.`;
+    } else if (sinIrpf || x.ahorro < 1) {
+      el.innerHTML = `Sin retención de IRPF, <b>probablemente no paga impuestos</b>, así que no tendría ahorro. Su dinero sí suma en la hucha.`;
+    } else {
+      const c100 = Math.round(x.ahorro / Math.min(p.aporta, CFG.limitePorPersona) * 100);
+      el.innerHTML = `Por cada <b>100 €</b> que mete, se ahorra unos <b>${c100} €</b>. En total, unos <b>${eur.format(x.ahorro)}</b> al año.`;
+    }
+  });
+
+  // Quién mete el dinero: solo padres o también familia
+  const soloPadres = people.every(p => esPadre(p.quien));
+  const quien = soloPadres ? "vosotros, los padres" : "vosotros y vuestra familia";
+  $("parLabel").textContent = `Lo que ganáis ${quien}`;
+  $("flowPar").textContent = soloPadres ? "Vosotros, los padres" : "Vosotros y la familia";
+  $("flowTax").textContent = `os devuelve ${eur.format(S)} al año`;
+  $("flowMoney").textContent = `metéis ${eur.format(A)} al año`;
+  const por100 = A > 0 ? Math.round(S / A * 100) : 0;
+  $("summary").innerHTML = A === 0
+    ? `Escribe cuánto metéis al año y aquí verás el resultado.`
+    : S > 0.5
+      ? `Por cada <b>100 €</b> que metéis en la hucha, Hacienda os devuelve <b class="c-tax">${por100} €</b>. Vuestro hijo recibe los <b class="c-kid">100 € enteros</b>.`
+      : `Con estos sueldos Hacienda no os devolvería nada, pero vuestro hijo recibe <b class="c-kid">todo lo que metéis</b>.`;
+
+  $("rAporta").textContent = eur.format(A);
+  $("rAhorro").textContent = eur.format(S);
+  $("rCoste").textContent = eur.format(A - S);
+  $("rAhorroTotK").innerHTML = `En ${n} ${n === 1 ? "año" : "años"}, Hacienda os habrá devuelto<small>Hasta que cumpla ${fin} años</small>`;
+  $("rAhorroTot").textContent = eur.format(S * n);
+  $("rRecibe").textContent = eur.format(A);
+  $("rRecibeNote").textContent = A > CFG.exencionHijo
+    ? `Paga impuestos solo por lo que pase de unos ${eur.format(CFG.exencionHijo)}`
+    : "Sin pagar impuestos por recibirlo";
+  $("rCuentaK").innerHTML = `A los ${fin} años, si se queda en la cuenta<small>Tiene justo lo que metisteis</small>`;
+  $("personsOut").innerHTML = people.length > 1
+    ? people.map((p, i) => `<div><span>${p.quien} mete <b>${eur.format(p.aporta)}</b></span><span>se ahorra <b>${eur.format(res[i].ahorro)}</b> al año</span></div>`).join("")
+    : "";
+
+  const cuenta = A * n;
+  const inv = grow(A, op.r, n);
+  const pes = grow(A, op.r / 2, n);
+  const finInv = inv[n - 1], finPes = pes[n - 1];
+  $("rCuenta").textContent = eur.format(cuenta);
+  const invertido = op.r > 0;
+  $("lineInv").hidden = !invertido; $("linePes").hidden = !invertido; $("legGrowth").hidden = !invertido;
+  if (invertido) {
+    $("rInvK").innerHTML = `A los ${fin} años, si se invierte en ${op.t.toLowerCase()}<small>Con un ≈ ${pct(op.r)} al año, sin garantía</small><a href="#paso3" class="jump">Cambiar dónde se invierte</a>`;
+    $("rInv").textContent = eur.format(finInv);
+    $("rPes").textContent = eur.format(finPes);
+    $("kidSentence").innerHTML = A > 0
+      ? `Metiendo <b>${eur.format(A)}</b> al año, tu hijo podría tener unos <b>${eur.format(finInv)}</b> a los ${fin} años: <b>${eur.format(finInv - cuenta)}</b> más de lo que metisteis. No está garantizado: algunos años bajará.`
+      : "";
+  } else {
+    $("kidSentence").innerHTML = A > 0
+      ? `El dinero <b>se queda tal cual</b>: a los ${fin} años tendrá los <b>${eur.format(cuenta)}</b> que metisteis. No sube ni baja, aunque con la inflación pierde algo de poder de compra. <a href="#paso3" class="jump">Ver qué pasaría si se invierte</a>`
+      : "";
+  }
+
+  // Avisos en lenguaje sencillo
+  const w = [];
+  if (A === 0) w.push("Escribe cuánto mete cada persona al año para ver el resultado.");
+  people.forEach((p, i) => {
+    if (p.aporta > CFG.limitePorPersona && !(conjunta && i < 2))
+      w.push(`${p.quien} mete más de 10.000 € al año. Solo los primeros 10.000 € le ahorran impuestos ese año.`);
+    if (res[i].base > 0 && p.aporta > res[i].base)
+      w.push(`${p.quien} mete más de lo que gana a efectos de impuestos. Solo se descuenta hasta lo que gana.`);
+  });
+  if (conjunta && people.length >= 2 && people[0].aporta + people[1].aporta > CFG.limitePorPersona)
+    w.push(`Con la renta conjunta, ${people[0].quien.toLowerCase()} y ${people[1].quien.toLowerCase()} solo se descuentan 10.000 € entre los dos. Haciendo la renta por separado podríais ahorrar más.`);
+  const totRed = people.reduce((s, p) => s + Math.min(p.aporta, CFG.limitePorPersona), 0);
+  if (totRed > CFG.limiteTotal)
+    w.push(`Entre todos superáis el máximo de 24.250 € al año, así que el ahorro se reparte entre quienes aportan.`);
+  if (A > CFG.exencionHijo)
+    w.push(`Si metéis más de unos ${eur.format(CFG.exencionHijo)} al año, vuestro hijo podría tener que pagar impuestos por la parte que sobra. Consultadlo antes.`);
+  if (opcion === "bolsa" && n < 8)
+    w.push(`Con menos de 8 años por delante, la bolsa puede pillaros en un mal momento. Para plazos cortos suele elegirse algo más seguro.`);
+  $("warns").innerHTML = w.map(t => `<div class="warn">${t}</div>`).join("");
+
+  // Tabla
+  $("table").innerHTML = `<thead><tr><th>Edad</th><th>Metido</th><th>Ahorro impuestos</th><th>En la hucha</th></tr></thead><tbody>${
+    inv.map((v, y) => `<tr><td>${ini + y + 1} años</td><td>${eur.format(A * (y + 1))}</td><td>${eur.format(S * (y + 1))}</td><td><b>${eur.format(v)}</b></td></tr>`).join("")
+  }</tbody>`;
+
+  const series = inv.map((v, y) => ({ edad: ini + y + 1, valor: v, metido: A * (y + 1) }));
+  if (selIdx === null || selIdx >= series.length) selIdx = series.length - 1;
+  drawChart(series);
+}
+
+// ===== Gráfico =====
+function niceStep(max, ticks) {
+  const raw = max / ticks, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p;
+}
+function short(v) {
+  if (v >= 1e6) return (v / 1e6).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " M€";
+  if (v >= 1e3) return String(Math.round(v / 1e3)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " mil €";
+  return Math.round(v) + " €";
+}
+let lastSeries = null;
+function drawChart(series) {
+  lastSeries = series;
+  const svg = $("chart");
+  // El ancho real del contenedor, para que el texto se vea a su tamaño en el móvil
+  const W = Math.max(300, Math.round(svg.parentElement.clientWidth || 640));
+  const H = W < 480 ? 240 : 290, L = 62, R = 8, T = 12, B = 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const max = Math.max(1, ...series.map(s => s.valor));
+  const step = niceStep(max, 4), top = Math.ceil(max / step) * step;
+  const y = v => T + (H - T - B) * (1 - v / top);
+  const n = series.length, slot = (W - L - R) / n, bw = Math.max(2, Math.min(36, slot * 0.7));
+  let s = "";
+  for (let v = 0; v <= top + 1e-6; v += step) {
+    s += `<line class="grid-l" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/>`;
+    s += `<text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${short(v)}</text>`;
+  }
+  const every = Math.ceil(n / Math.max(4, Math.floor((W - L - R) / 34)));
+  series.forEach((d, i) => {
+    const cx = L + slot * i + slot / 2, x = cx - bw / 2;
+    if (i === selIdx) s += `<rect class="sel" x="${L + slot * i}" y="${T}" width="${slot}" height="${H - T - B}"/>`;
+    const g = Math.max(0, d.valor - d.metido);
+    s += `<rect class="money" x="${x}" y="${y(d.metido)}" width="${bw}" height="${Math.max(0, y(0) - y(d.metido))}"/>`;
+    if (g > 0) s += `<rect class="growth" x="${x}" y="${y(d.valor)}" width="${bw}" height="${Math.max(0, y(d.metido) - y(d.valor))}"/>`;
+    if ((i % every === 0 && n - 1 - i >= every) || i === n - 1) s += `<text x="${cx}" y="${H - 10}" text-anchor="middle">${d.edad}</text>`;
+    s += `<rect class="hit" data-i="${i}" x="${L + slot * i}" y="${T}" width="${slot}" height="${H - T - B}"><title>${d.edad} años: ${eur.format(d.valor)}</title></rect>`;
+  });
+  svg.innerHTML = s;
+  svg.querySelectorAll(".hit").forEach(el => {
+    const pick = () => { selIdx = +el.dataset.i; drawChart(series); };
+    el.addEventListener("click", pick); el.addEventListener("mouseenter", pick);
+  });
+  const d = series[selIdx];
+  const g = d.valor - d.metido;
+  $("point").innerHTML = `Cuando tenga <b>${d.edad} años</b>: en la hucha habrá <b>${eur.format(d.valor)}</b>` +
+    (g > 0.5 ? ` (${eur.format(d.metido)} metidos + ${eur.format(g)} de crecimiento).` : `.`) + ` Toca una barra para ver otro año.`;
+}
+
+// ===== Arranque =====
+$("addBtn").addEventListener("click", () => {
+  if (people.length >= CFG.maxPersonas) return;
+  people.push({ quien: people.length === 2 ? "Abuela" : "Otra persona", aporta: 1000, modo: "nomina", irpf: 10, bruto: 20000 });
+  renderPeople(); touched(); calc();
+});
+["edadActual", "edadFin"].forEach(id => $(id).addEventListener("input", () => { touched(); selIdx = null; calc(); }));
+$("conjunta").addEventListener("change", () => { touched(); calc(); });
+$("form").addEventListener("submit", e => e.preventDefault());
+// ===== Explicación en imágenes (diseño hecho en Canva, exportado a img/) =====
+const SLIDES = [
+  "Portada: ¿Qué es un patrimonio protegido? La hucha especial para el futuro de tu hijo o hija con discapacidad.",
+  "Una hucha a nombre de tu hijo: dinero y bienes (ahorros, fondos, incluso una vivienda) que pertenecen a la persona con discapacidad y solo se usan para sus necesidades. Lo regula la Ley 41/2003.",
+  "¿Quién puede tenerlo? Personas con discapacidad psíquica o intelectual (por ejemplo, autismo) del 33 % o más, o física o sensorial del 65 % o más. A cualquier edad.",
+  "¿Quién puede meter dinero? Madre y padre, abuelos, tíos, hermanos y otros familiares hasta tercer grado, la pareja o los tutores. Cada uno en su propia renta.",
+  "La ventaja: lo que metes se descuenta en la renta, hasta 10.000 € al año por persona y 24.250 € entre todos. Por cada 100 € puedes ahorrarte entre 19 € y 45 €. Tu hijo recibe los 100 € enteros.",
+  "¿Para qué se puede usar? Sí: terapias, psicólogos, apoyos en el colegio, cuidados y material. No: sacarlo para otras cosas durante el año en que se mete y los cuatro siguientes.",
+  "¿Cómo se empieza? Notario, cuenta en el banco solo para la hucha, meter el dinero antes del 31 de diciembre y aplicar la reducción en la renta. En N.A.N.A. te ayudamos."
+];
+// Enlace de inserción de Canva (Compartir → Más → Insertar). Si está puesto, se muestra el diseño de Canva;
+// si no, las imágenes de img/info-N.png; y si tampoco están, el texto de cada página.
+const CANVA_EMBED = "https://www.canva.com/design/DAHZAdAgoyI/oDFTW2c7goM-jefELkl--w/view?embed";
+let slideIdx = 0, lastFocus = null;
+function buildSlides() {
+  if (CANVA_EMBED) {
+    let src = CANVA_EMBED.trim();
+    const m = src.match(/src="([^"]+)"/); if (m) src = m[1];
+    if (!/[?&]embed/.test(src)) src += (src.includes("?") ? "&" : "?") + "embed";
+    $("slides").outerHTML = `<div class="canva-wrap"><iframe src="${src}" title="Explicación: ¿qué es un patrimonio protegido?" loading="lazy" allow="fullscreen" allowfullscreen></iframe></div>
+      <details class="info"><summary>Leer la explicación en texto</summary><div class="body">${SLIDES.map(t => `<p>${t}</p>`).join("")}</div></details>`;
+    document.querySelector(".modal-nav").hidden = true;
+    return;
+  }
+  $("slides").innerHTML = SLIDES.map((alt, i) => `
+    <figure class="slide" style="margin:0" aria-roledescription="diapositiva" aria-label="${i + 1} de ${SLIDES.length}">
+      <img src="img/info-${i + 1}.png" alt="${alt.replace(/"/g, "&quot;")}" loading="${i < 2 ? "eager" : "lazy"}" width="1080" height="1350"
+        onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'alt',textContent:this.alt}))">
+    </figure>`).join("");
+  $("dots").innerHTML = SLIDES.map(() => "<i></i>").join("");
+}
+function showSlide(i, smooth = true) {
+  slideIdx = Math.max(0, Math.min(SLIDES.length - 1, i));
+  const box = $("slides");
+  if (!box) return;
+  box.scrollTo({ left: box.clientWidth * slideIdx + 12 * slideIdx, behavior: smooth ? "smooth" : "auto" });
+  updateNav();
+}
+function updateNav() {
+  $("prevSlide").disabled = slideIdx === 0;
+  $("nextSlide").disabled = slideIdx === SLIDES.length - 1;
+  [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === slideIdx));
+}
+function openInfo() {
+  lastFocus = document.activeElement;
+  $("infoModal").hidden = false;
+  document.body.style.overflow = "hidden";
+  showSlide(0, false);
+  $("infoClose").focus();
+}
+function closeInfo() {
+  $("infoModal").hidden = true;
+  document.body.style.overflow = "";
+  if (lastFocus) lastFocus.focus();
+}
+buildSlides();
+$("infoBtn").addEventListener("click", openInfo);
+$("infoClose").addEventListener("click", closeInfo);
+$("infoStart").addEventListener("click", () => { closeInfo(); $("form").scrollIntoView({ behavior: "smooth", block: "start" }); });
+$("prevSlide").addEventListener("click", () => showSlide(slideIdx - 1));
+$("nextSlide").addEventListener("click", () => showSlide(slideIdx + 1));
+$("infoModal").addEventListener("click", e => { if (e.target === $("infoModal")) closeInfo(); });
+if ($("slides")) $("slides").addEventListener("scroll", () => {
+  const box = $("slides"); const i = Math.round(box.scrollLeft / (box.clientWidth + 12));
+  if (i !== slideIdx) { slideIdx = i; updateNav(); }
+}, { passive: true });
+document.addEventListener("keydown", e => {
+  if ($("infoModal").hidden) return;
+  if (e.key === "Escape") closeInfo();
+  if (e.key === "ArrowRight") showSlide(slideIdx + 1);
+  if (e.key === "ArrowLeft") showSlide(slideIdx - 1);
+});
+
+// Los enlaces "Cambiar dónde se invierte" llevan al paso 3 y lo resaltan
+document.addEventListener("click", e => {
+  const a = e.target.closest("a.jump");
+  if (!a) return;
+  e.preventDefault();
+  const step = $("paso3");
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  step.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  step.classList.remove("flash"); void step.offsetWidth; step.classList.add("flash");
+  setTimeout(() => { const r = document.querySelector('input[name="opcion"]:checked'); if (r) r.focus({ preventScroll: true }); }, smooth ? 500 : 0);
+  setTimeout(() => step.classList.remove("flash"), 2000);
+});
+let rz;
+window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (lastSeries) drawChart(lastSeries); }, 150); });
+document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", () => {
+  const txt = btn.dataset.copy;
+  const done = () => { btn.textContent = "Copiado"; setTimeout(() => { btn.textContent = "Copiar"; }, 1800); };
+  const fallback = () => {
+    const el = btn.previousElementSibling.querySelector("a");
+    const r = document.createRange(); r.selectNodeContents(el);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    btn.textContent = "Seleccionado";
+    setTimeout(() => { btn.textContent = "Copiar"; }, 1800);
+  };
+  try { navigator.clipboard.writeText(txt).then(done, fallback); } catch (e) { fallback(); }
+}));
+renderPeople();
+renderOpts();
+calc();
+</script>
+</body>
+</html>
