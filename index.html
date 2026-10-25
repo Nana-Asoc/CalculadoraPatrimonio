@@ -859,9 +859,10 @@ const SLIDES = [
   "¿Para qué se puede usar? Sí: terapias, psicólogos, apoyos en el colegio, cuidados y material. No: sacarlo para otras cosas durante el año en que se mete y los cuatro siguientes.",
   "¿Cómo se empieza? Notario, cuenta en el banco solo para la hucha, meter el dinero antes del 31 de diciembre y aplicar la reducción en la renta. En N.A.N.A. te ayudamos."
 ];
-// Enlace de inserción de Canva (Compartir → Más → Insertar). Si está puesto, se muestra el diseño de Canva;
-// si no, las imágenes de img/info-N.png; y si tampoco están, el texto de cada página.
-const CANVA_EMBED = "https://www.canva.com/design/DAHZAdAgoyI/oDFTW2c7goM-jefELkl--w/view?embed";
+// Imágenes exportadas desde Canva (img/info-N.jpg), en orden de lectura. Se usa esto en vez de incrustar
+// el iframe de Canva porque en el móvil el iframe muestra encima sus propios controles (flechas, lupa,
+// menú) que quedan pegados al texto y lo ensucian. Si faltara alguna imagen, cae al texto de cada página.
+const CANVA_EMBED = "";
 let slideIdx = 0, lastFocus = null;
 function buildSlides() {
   if (CANVA_EMBED) {
@@ -875,7 +876,7 @@ function buildSlides() {
   }
   $("slides").innerHTML = SLIDES.map((alt, i) => `
     <figure class="slide" style="margin:0" aria-roledescription="diapositiva" aria-label="${i + 1} de ${SLIDES.length}">
-      <img src="img/info-${i + 1}.png" alt="${alt.replace(/"/g, "&quot;")}" loading="${i < 2 ? "eager" : "lazy"}" width="1080" height="1350"
+      <img src="img/info-${i + 1}.jpg" alt="${alt.replace(/"/g, "&quot;")}" loading="${i < 2 ? "eager" : "lazy"}" width="800" height="1067"
         onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'alt',textContent:this.alt}))">
     </figure>`).join("");
   $("dots").innerHTML = SLIDES.map(() => "<i></i>").join("");
