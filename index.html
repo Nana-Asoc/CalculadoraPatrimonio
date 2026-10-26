@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calcula cuánto te ahorras en la renta metiendo dinero en el patrimonio protegido de tu hijo con discapacidad y cuánto tendrá él con los años. Una herramienta de N.A.N.A.">
+<meta name="description" content="Calcula cuánto te ahorras en la renta aportando dinero en el patrimonio protegido de tu hijo con discapacidad y cuánto tendrá él con los años. Una herramienta de N.A.N.A.">
 <meta name="theme-color" content="#1C6770">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
@@ -261,7 +261,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
   <header>
     <span class="eyebrow">N.A.N.A. · Patrimonio protegido</span>
     <h1>Calculadora del patrimonio protegido</h1>
-    <p>El patrimonio protegido es como una <b>hucha especial a nombre de tu hijo o hija con discapacidad</b>. El dinero que metes en ella es suyo, para sus necesidades, y a cambio Hacienda te devuelve una parte en la declaración de la renta. Responde a tres preguntas y verás cuánto te ahorras y cuánto dinero tendrá tu hijo.</p>
+    <p>El patrimonio protegido es como una <b>hucha especial a nombre de tu hijo o hija con discapacidad</b>. El dinero que aportas en ella es suyo, para sus necesidades, y a cambio Hacienda te devuelve una parte en la declaración de la renta. Responde a tres preguntas y verás cuánto te ahorras y cuánto dinero tendrá tu hijo.</p>
     <button type="button" class="info-btn" id="infoBtn" aria-haspopup="dialog">
       <span class="info-i" aria-hidden="true">i</span>
       <span><b>¿Es la primera vez que oyes hablar de esto?</b><small>Mira en 1 minuto qué es un patrimonio protegido</small></span>
@@ -281,7 +281,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
             <div class="suffix years"><input type="number" id="edadActual" min="0" max="64" step="1" value="8" inputmode="numeric"></div>
           </div>
           <div>
-            <label for="edadFin">Meteréis dinero hasta los</label>
+            <label for="edadFin">Aportaréis dinero hasta los</label>
             <div class="suffix years"><input type="number" id="edadFin" min="1" max="65" step="1" value="18" inputmode="numeric"></div>
           </div>
         </div>
@@ -300,7 +300,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
 
       <!-- Paso 2 -->
       <div class="step">
-        <div class="step-title"><span class="step-n">2</span><h2>Quién mete dinero en la hucha</h2></div>
+        <div class="step-title"><span class="step-n">2</span><h2>Quién aporta dinero en la hucha</h2></div>
         <p class="help">Puede ser una persona o varias: madre, padre, abuelos, tíos… Cada una se ahorra impuestos en su propia renta.</p>
         <div class="people" id="people"></div>
         <button type="button" class="btn-add" id="addBtn">+ Añadir otra persona</button>
@@ -312,7 +312,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
           <summary>¿Qué cambia si hacemos la renta conjunta?</summary>
           <div class="body">
             <p>Cada persona puede descontarse hasta <b>10.000 € al año</b>. Pero si la pareja hace <b>una sola declaración</b> (conjunta), ese límite de 10.000 € es para los dos juntos.</p>
-            <p>Si pensáis meter más de 10.000 € entre los dos, puede compensar hacer cada uno su declaración por separado. Un gestor os puede decir qué os sale mejor.</p>
+            <p>Si pensáis aportar más de 10.000 € entre los dos, puede compensar hacer cada uno su declaración por separado. Un gestor os puede decir qué os sale mejor.</p>
           </div>
         </details>
       </div>
@@ -325,7 +325,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
         <details class="info">
           <summary>¿De dónde salen estos porcentajes?</summary>
           <div class="body">
-            <p>La <b>rentabilidad</b> es cuánto crece el dinero cada año. Si metes 100 € y la rentabilidad es del 4 %, al año siguiente tienes 104 €. Al año siguiente crece también lo ganado, y por eso el efecto aumenta con los años.</p>
+            <p>La <b>rentabilidad</b> es cuánto crece el dinero cada año. Si aportas 100 € y la rentabilidad es del 4 %, al año siguiente tienes 104 €. Al año siguiente crece también lo ganado, y por eso el efecto aumenta con los años.</p>
             <ul>
               <li><b>Cuenta (0 %)</b>: el banco no paga nada. El dinero no sube ni baja, aunque con la subida de precios (inflación) cada año compra un poco menos.</li>
               <li><b>Depósito o fondo monetario (≈ 2 %)</b>: es lo que suelen pagar los bancos por dinero casi sin riesgo. Cambia según los tipos de interés del momento.</li>
@@ -359,9 +359,9 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
         <div class="res-block taxbox">
           <span class="res-label" id="parLabel">Lo que ganáis vosotros, los padres</span>
           <div class="lines">
-            <div class="line"><span class="t">Metéis en la hucha cada año</span><span class="v" id="rAporta">—</span></div>
+            <div class="line"><span class="t">Aportáis en la hucha cada año</span><span class="v" id="rAporta">—</span></div>
             <div class="line hi"><span class="t">Hacienda os devuelve cada año<small>Pagáis menos en la declaración de la renta</small></span><span class="v" id="rAhorro">—</span></div>
-            <div class="line"><span class="t">Por eso, de verdad os cuesta cada año<small>Lo que metéis menos lo que os devuelven</small></span><span class="v" id="rCoste">—</span></div>
+            <div class="line"><span class="t">Por eso, de verdad os cuesta cada año<small>Lo que aportáis menos lo que os devuelven</small></span><span class="v" id="rCoste">—</span></div>
             <div class="line"><span class="t" id="rAhorroTotK">En total, Hacienda os habrá devuelto</span><span class="v" id="rAhorroTot">—</span></div>
           </div>
           <div class="persons-out" id="personsOut"></div>
@@ -381,11 +381,12 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
         <div style="display:grid;gap:8px">
           <h3>Cómo crece la hucha año a año</h3>
           <div class="legend">
-            <span style="--c:var(--money)"><i></i>Dinero que habéis metido</span>
+            <span style="--c:var(--money)"><i></i>Dinero que habéis aportado</span>
             <span style="--c:var(--growth)" id="legGrowth"><i></i>Lo que ha crecido</span>
           </div>
           <div class="chart-wrap"><svg class="chart" id="chart" role="img" aria-label="Gráfico del dinero de la hucha según la edad del niño"></svg></div>
           <div class="point" id="point"></div>
+          <p class="help">Cada año, la rentabilidad se aplica sobre todo lo acumulado, incluidos los beneficios de años anteriores (interés compuesto). Las aportaciones de cada año se suman al principio del año.</p>
         </div>
 
         <div class="warns" id="warns"></div>
@@ -421,8 +422,8 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
     <h2>Preguntas frecuentes</h2>
 
     <details class="info"><summary>¿Por qué Hacienda me devuelve dinero?</summary><div class="body">
-      <p>La ley premia a las familias que guardan dinero para el futuro de una persona con discapacidad. El dinero que metes en la hucha se <b>resta de lo que has ganado</b> a efectos de impuestos.</p>
-      <p>Ejemplo: si ganas 30.000 € al año y metes 5.000 € en la hucha, Hacienda calcula tus impuestos como si hubieras ganado 25.000 €. Pagas menos impuestos y esa diferencia es tu ahorro.</p>
+      <p>La ley premia a las familias que guardan dinero para el futuro de una persona con discapacidad. El dinero que aportas en la hucha se <b>resta de lo que has ganado</b> a efectos de impuestos.</p>
+      <p>Ejemplo: si ganas 30.000 € al año y aportas 5.000 € en la hucha, Hacienda calcula tus impuestos como si hubieras ganado 25.000 €. Pagas menos impuestos y esa diferencia es tu ahorro.</p>
       <p>No te ingresan nada cada mes: el ahorro aparece en la <b>declaración de la renta del año siguiente</b>, que te sale a devolver más o a pagar menos.</p>
     </div></details>
 
@@ -433,7 +434,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
 
     <details class="info"><summary>¿Por qué me ahorro más que el % de mi nómina?</summary><div class="body">
       <p>Hacienda cobra los impuestos por tramos: los primeros euros que ganas pagan un 19 %, los siguientes un 24 %, luego un 30 %… El % de tu nómina es una <b>media</b> de todos esos tramos.</p>
-      <p>Cuando metes dinero en la hucha, Hacienda lo descuenta de tus <b>últimos euros</b>, que son los que pagan el porcentaje más alto. Por eso, aunque tu nómina diga un 14 %, por cada 100 € que metes te puedes ahorrar unos 30 €. La calculadora hace este cálculo por ti.</p>
+      <p>Cuando aportas dinero en la hucha, Hacienda lo descuenta de tus <b>últimos euros</b>, que son los que pagan el porcentaje más alto. Por eso, aunque tu nómina diga un 14 %, por cada 100 € que aportas te puedes ahorrar unos 30 €. La calculadora hace este cálculo por ti.</p>
       <p>Para quien quiera comprobarlo con su declaración de la renta, esta es la tabla de tramos:</p>
       <table class="tramos">
         <thead><tr><th>Base liquidable general</th><th>Tramo más alto aprox.</th></tr></thead>
@@ -450,7 +451,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
       <ol>
         <li>Abre tu <b>última declaración de la renta</b> (en Renta Web de la Agencia Tributaria o la copia que te dio tu gestor).</li>
         <li>Busca la cifra de la <b>"Base liquidable general"</b>.</li>
-        <li>Mira en qué fila de la tabla cae: por cada 100 € que metas en la hucha, te ahorrarás aproximadamente ese porcentaje.</li>
+        <li>Mira en qué fila de la tabla cae: por cada 100 € que aportes en la hucha, te ahorrarás aproximadamente ese porcentaje.</li>
       </ol>
       <p>Los porcentajes de la tabla son aproximados: cada comunidad autónoma tiene su parte del impuesto y cambian un poco. En Cataluña, por ejemplo, suelen ser algo más altos.</p>
     </div></details>
@@ -469,7 +470,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
       <p>Sí, el dinero pasa a ser de tu hijo o hija y es para sus necesidades. Lo administráis vosotros (o quien diga la escritura).</p>
       <ul>
         <li><b>Se puede gastar en sus necesidades</b>: terapias, psicólogos, apoyos en el colegio, material, cuidados… Guarda las facturas.</li>
-        <li><b>No se puede sacar para otras cosas</b> durante el año en que lo metes y los cuatro siguientes. Si se hace, hay que devolver a Hacienda lo que te ahorraste.</li>
+        <li><b>No se puede sacar para otras cosas</b> durante el año en que lo aportas y los cuatro siguientes. Si se hace, hay que devolver a Hacienda lo que te ahorraste.</li>
       </ul>
     </div></details>
 
@@ -477,7 +478,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
       <ul>
         <li>Cada persona puede descontarse hasta <b>10.000 € al año</b>.</li>
         <li>Entre todas las personas que aportan, hasta <b>24.250 € al año</b> para el mismo niño o niña.</li>
-        <li>Lo que metes no puede ser más que lo que has ganado ese año a efectos de impuestos.</li>
+        <li>Lo que aportas no puede ser más que lo que has ganado ese año a efectos de impuestos.</li>
         <li>Para seguir aplicándoos las deducciones por vuestro hijo, él no debe tener ingresos de más de 8.000 € al año. En la práctica: no vender inversiones con muchas ganancias de golpe.</li>
       </ul>
     </div></details>
@@ -487,7 +488,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
         <li>Pide cita en un <b>notario</b> y presupuesto. Lleva el DNI y el certificado de discapacidad de tu hijo.</li>
         <li>El notario prepara la escritura del "patrimonio protegido a favor de…". Allí se dice quién lo administra.</li>
         <li>Abre una <b>cuenta en el banco</b> solo para la hucha. Pregunta si te dejan tener fondos de inversión dentro.</li>
-        <li>Mete el dinero <b>antes del 31 de diciembre</b> para que cuente en la renta de ese año.</li>
+        <li>Aporta el dinero <b>antes del 31 de diciembre</b> para que cuente en la renta de ese año.</li>
         <li>En la declaración de la renta, aplica la reducción por "aportaciones a patrimonios protegidos".</li>
       </ol>
       <p>En Cataluña, cada nueva aportación también se hace ante notario.</p>
@@ -498,7 +499,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
       <p>Puede afectar a algunas ayudas que miran los ingresos o el dinero de la persona, sobre todo a partir de los 18 años. Antes de empezar, consúltalo con un gestor o con la asociación.</p>
     </div></details>
 
-    <p class="disclaimer">Esta calculadora da una <b>estimación orientativa</b>. Usa tramos de impuestos aproximados y no tiene en cuenta todas las situaciones personales. No es asesoramiento fiscal ni financiero, y las inversiones pueden subir o bajar. Antes de decidir, consultad con un asesor fiscal.</p>
+    <p class="disclaimer">Esta calculadora da una <b>estimación orientativa</b>. Usa tramos de impuestos aproximados, rentabilidades medias y no tiene en cuenta todas las situaciones personales. No es asesoramiento fiscal ni financiero, y las inversiones pueden subir o bajar, sin garantía de rentabilidad. Antes de decidir, revisad estos datos con <b>vuestro banco habitual</b> (condiciones reales del producto, comisiones y plazos) y con un <b>asesor fiscal</b>.</p>
   </section>
 </div>
 
@@ -536,10 +537,10 @@ const CFG = {
   maxPersonas: 5
 };
 const OPCIONES = [
-  { id: "cuenta",  r: 0,    t: "Se queda en la cuenta", d: "Sin riesgo. No crece." },
-  { id: "deposito", r: 0.02, t: "Depósito o fondo monetario", d: "Riesgo muy bajo. Crece poco." },
-  { id: "mixto",   r: 0.04, t: "Fondo mixto", d: "Riesgo medio. Algunos años baja un poco." },
-  { id: "bolsa",   r: 0.06, t: "Fondo de bolsa mundial", d: "Riesgo alto. Solo para muchos años sin tocarlo." }
+  { id: "cuenta",  r: 0,    t: "Se queda en la cuenta", d: "Cuenta sin remuneración. Sin riesgo y sin rentabilidad." },
+  { id: "deposito", r: 0.02, t: "Depósito o fondo monetario", d: "Producto de muy bajo riesgo. La rentabilidad depende de los tipos de interés del momento." },
+  { id: "mixto",   r: 0.04, t: "Fondo mixto", d: "Combina renta fija y renta variable. Riesgo medio: algunos años puede bajar." },
+  { id: "bolsa",   r: 0.06, t: "Fondo de bolsa mundial", d: "Renta variable global. Riesgo alto: solo para plazos largos sin tocar el dinero." }
 ];
 const QUIEN = ["Madre", "Padre", "Abuela", "Abuelo", "Tía", "Tío", "Hermano/a", "Otra persona"];
 
@@ -621,7 +622,7 @@ function renderPeople() {
         ${people.length > 1 ? `<button type="button" class="btn-x" id="del${i}">Quitar</button>` : ""}
       </div>
       <div>
-        <label for="a${i}">¿Cuánto mete en la hucha al año?</label>
+        <label for="a${i}">¿Cuánto aporta en la hucha al año?</label>
         <div class="suffix"><input type="number" id="a${i}" min="0" step="500" value="${p.aporta}" inputmode="numeric"></div>
       </div>
       <div style="display:grid;gap:8px">
@@ -688,7 +689,7 @@ function calc() {
   const fin = Math.round(+$("edadFin").value);
   const n = fin - ini;
   if (!Number.isFinite(n) || n < 1 || n > 65 || ini < 0) {
-    $("errorBox").textContent = "La edad hasta la que meteréis dinero tiene que ser mayor que la edad que tiene ahora.";
+    $("errorBox").textContent = "La edad hasta la que aportaréis dinero tiene que ser mayor que la edad que tiene ahora.";
     $("errorBox").hidden = false; $("out").hidden = true; return;
   }
   $("errorBox").hidden = true; $("out").hidden = false;
@@ -705,28 +706,28 @@ function calc() {
     const x = res[i];
     const sinIrpf = p.modo === "nomina" ? p.irpf <= 0 : x.sinImpuesto;
     if (p.aporta <= 0) {
-      el.innerHTML = `Escribe cuánto mete al año para ver su ahorro.`;
+      el.innerHTML = `Escribe cuánto aporta al año para ver su ahorro.`;
     } else if (sinIrpf || x.ahorro < 1) {
       el.innerHTML = `Sin retención de IRPF, <b>probablemente no paga impuestos</b>, así que no tendría ahorro. Su dinero sí suma en la hucha.`;
     } else {
       const c100 = Math.round(x.ahorro / Math.min(p.aporta, CFG.limitePorPersona) * 100);
-      el.innerHTML = `Por cada <b>100 €</b> que mete, se ahorra unos <b>${c100} €</b>. En total, unos <b>${eur.format(x.ahorro)}</b> al año.`;
+      el.innerHTML = `Por cada <b>100 €</b> que aporta, se ahorra unos <b>${c100} €</b>. En total, unos <b>${eur.format(x.ahorro)}</b> al año.`;
     }
   });
 
-  // Quién mete el dinero: solo padres o también familia
+  // Quién aporta el dinero: solo padres o también familia
   const soloPadres = people.every(p => esPadre(p.quien));
   const quien = soloPadres ? "vosotros, los padres" : "vosotros y vuestra familia";
   $("parLabel").textContent = `Lo que ganáis ${quien}`;
   $("flowPar").textContent = soloPadres ? "Vosotros, los padres" : "Vosotros y la familia";
   $("flowTax").textContent = `os devuelve ${eur.format(S)} al año`;
-  $("flowMoney").textContent = `metéis ${eur.format(A)} al año`;
+  $("flowMoney").textContent = `aportáis ${eur.format(A)} al año`;
   const por100 = A > 0 ? Math.round(S / A * 100) : 0;
   $("summary").innerHTML = A === 0
-    ? `Escribe cuánto metéis al año y aquí verás el resultado.`
+    ? `Escribe cuánto aportáis al año y aquí verás el resultado.`
     : S > 0.5
-      ? `Por cada <b>100 €</b> que metéis en la hucha, Hacienda os devuelve <b class="c-tax">${por100} €</b>. Vuestro hijo recibe los <b class="c-kid">100 € enteros</b>.`
-      : `Con estos sueldos Hacienda no os devolvería nada, pero vuestro hijo recibe <b class="c-kid">todo lo que metéis</b>.`;
+      ? `Por cada <b>100 €</b> que aportáis en la hucha, Hacienda os devuelve <b class="c-tax">${por100} €</b>. Vuestro hijo recibe los <b class="c-kid">100 € enteros</b>.`
+      : `Con estos sueldos Hacienda no os devolvería nada, pero vuestro hijo recibe <b class="c-kid">todo lo que aportáis</b>.`;
 
   $("rAporta").textContent = eur.format(A);
   $("rAhorro").textContent = eur.format(S);
@@ -737,9 +738,9 @@ function calc() {
   $("rRecibeNote").textContent = A > CFG.exencionHijo
     ? `Paga impuestos solo por lo que pase de unos ${eur.format(CFG.exencionHijo)}`
     : "Sin pagar impuestos por recibirlo";
-  $("rCuentaK").innerHTML = `A los ${fin} años, si se queda en la cuenta<small>Tiene justo lo que metisteis</small>`;
+  $("rCuentaK").innerHTML = `A los ${fin} años, si se queda en la cuenta<small>Tiene justo lo que aportasteis</small>`;
   $("personsOut").innerHTML = people.length > 1
-    ? people.map((p, i) => `<div><span>${p.quien} mete <b>${eur.format(p.aporta)}</b></span><span>se ahorra <b>${eur.format(res[i].ahorro)}</b> al año</span></div>`).join("")
+    ? people.map((p, i) => `<div><span>${p.quien} aporta <b>${eur.format(p.aporta)}</b></span><span>se ahorra <b>${eur.format(res[i].ahorro)}</b> al año</span></div>`).join("")
     : "";
 
   const cuenta = A * n;
@@ -754,22 +755,22 @@ function calc() {
     $("rInv").textContent = eur.format(finInv);
     $("rPes").textContent = eur.format(finPes);
     $("kidSentence").innerHTML = A > 0
-      ? `Metiendo <b>${eur.format(A)}</b> al año, tu hijo podría tener unos <b>${eur.format(finInv)}</b> a los ${fin} años: <b>${eur.format(finInv - cuenta)}</b> más de lo que metisteis. No está garantizado: algunos años bajará.`
+      ? `Aportando <b>${eur.format(A)}</b> al año, tu hijo podría tener unos <b>${eur.format(finInv)}</b> a los ${fin} años: <b>${eur.format(finInv - cuenta)}</b> más de lo que aportasteis. No está garantizado: algunos años bajará.`
       : "";
   } else {
     $("kidSentence").innerHTML = A > 0
-      ? `El dinero <b>se queda tal cual</b>: a los ${fin} años tendrá los <b>${eur.format(cuenta)}</b> que metisteis. No sube ni baja, aunque con la inflación pierde algo de poder de compra. <a href="#paso3" class="jump">Ver qué pasaría si se invierte</a>`
+      ? `El dinero <b>se queda tal cual</b>: a los ${fin} años tendrá los <b>${eur.format(cuenta)}</b> que aportasteis. No sube ni baja, aunque con la inflación pierde algo de poder de compra. <a href="#paso3" class="jump">Ver qué pasaría si se invierte</a>`
       : "";
   }
 
   // Avisos en lenguaje sencillo
   const w = [];
-  if (A === 0) w.push("Escribe cuánto mete cada persona al año para ver el resultado.");
+  if (A === 0) w.push("Escribe cuánto aporta cada persona al año para ver el resultado.");
   people.forEach((p, i) => {
     if (p.aporta > CFG.limitePorPersona && !(conjunta && i < 2))
-      w.push(`${p.quien} mete más de 10.000 € al año. Solo los primeros 10.000 € le ahorran impuestos ese año.`);
+      w.push(`${p.quien} aporta más de 10.000 € al año. Solo los primeros 10.000 € le ahorran impuestos ese año.`);
     if (res[i].base > 0 && p.aporta > res[i].base)
-      w.push(`${p.quien} mete más de lo que gana a efectos de impuestos. Solo se descuenta hasta lo que gana.`);
+      w.push(`${p.quien} aporta más de lo que gana a efectos de impuestos. Solo se descuenta hasta lo que gana.`);
   });
   if (conjunta && people.length >= 2 && people[0].aporta + people[1].aporta > CFG.limitePorPersona)
     w.push(`Con la renta conjunta, ${people[0].quien.toLowerCase()} y ${people[1].quien.toLowerCase()} solo se descuentan 10.000 € entre los dos. Haciendo la renta por separado podríais ahorrar más.`);
@@ -777,17 +778,19 @@ function calc() {
   if (totRed > CFG.limiteTotal)
     w.push(`Entre todos superáis el máximo de 24.250 € al año, así que el ahorro se reparte entre quienes aportan.`);
   if (A > CFG.exencionHijo)
-    w.push(`Si metéis más de unos ${eur.format(CFG.exencionHijo)} al año, vuestro hijo podría tener que pagar impuestos por la parte que sobra. Consultadlo antes.`);
+    w.push(`Si aportáis más de unos ${eur.format(CFG.exencionHijo)} al año, vuestro hijo podría tener que pagar impuestos por la parte que sobra. Consultadlo antes.`);
+  if (opcion !== "cuenta")
+    w.push(`La rentabilidad (${pct(op.r)} al año) es una estimación orientativa, antes de comisiones. Antes de contratar, revisad con vuestro banco las condiciones reales del producto.`);
   if (opcion === "bolsa" && n < 8)
     w.push(`Con menos de 8 años por delante, la bolsa puede pillaros en un mal momento. Para plazos cortos suele elegirse algo más seguro.`);
   $("warns").innerHTML = w.map(t => `<div class="warn">${t}</div>`).join("");
 
   // Tabla
-  $("table").innerHTML = `<thead><tr><th>Edad</th><th>Metido</th><th>Ahorro impuestos</th><th>En la hucha</th></tr></thead><tbody>${
+  $("table").innerHTML = `<thead><tr><th>Edad</th><th>Aportado</th><th>Ahorro impuestos</th><th>En la hucha</th></tr></thead><tbody>${
     inv.map((v, y) => `<tr><td>${ini + y + 1} años</td><td>${eur.format(A * (y + 1))}</td><td>${eur.format(S * (y + 1))}</td><td><b>${eur.format(v)}</b></td></tr>`).join("")
   }</tbody>`;
 
-  const series = inv.map((v, y) => ({ edad: ini + y + 1, valor: v, metido: A * (y + 1) }));
+  const series = inv.map((v, y) => ({ edad: ini + y + 1, valor: v, aportado: A * (y + 1) }));
   if (selIdx === null || selIdx >= series.length) selIdx = series.length - 1;
   drawChart(series);
 }
@@ -823,9 +826,9 @@ function drawChart(series) {
   series.forEach((d, i) => {
     const cx = L + slot * i + slot / 2, x = cx - bw / 2;
     if (i === selIdx) s += `<rect class="sel" x="${L + slot * i}" y="${T}" width="${slot}" height="${H - T - B}"/>`;
-    const g = Math.max(0, d.valor - d.metido);
-    s += `<rect class="money" x="${x}" y="${y(d.metido)}" width="${bw}" height="${Math.max(0, y(0) - y(d.metido))}"/>`;
-    if (g > 0) s += `<rect class="growth" x="${x}" y="${y(d.valor)}" width="${bw}" height="${Math.max(0, y(d.metido) - y(d.valor))}"/>`;
+    const g = Math.max(0, d.valor - d.aportado);
+    s += `<rect class="money" x="${x}" y="${y(d.aportado)}" width="${bw}" height="${Math.max(0, y(0) - y(d.aportado))}"/>`;
+    if (g > 0) s += `<rect class="growth" x="${x}" y="${y(d.valor)}" width="${bw}" height="${Math.max(0, y(d.aportado) - y(d.valor))}"/>`;
     if ((i % every === 0 && n - 1 - i >= every) || i === n - 1) s += `<text x="${cx}" y="${H - 10}" text-anchor="middle">${d.edad}</text>`;
     s += `<rect class="hit" data-i="${i}" x="${L + slot * i}" y="${T}" width="${slot}" height="${H - T - B}"><title>${d.edad} años: ${eur.format(d.valor)}</title></rect>`;
   });
@@ -835,9 +838,9 @@ function drawChart(series) {
     el.addEventListener("click", pick); el.addEventListener("mouseenter", pick);
   });
   const d = series[selIdx];
-  const g = d.valor - d.metido;
+  const g = d.valor - d.aportado;
   $("point").innerHTML = `Cuando tenga <b>${d.edad} años</b>: en la hucha habrá <b>${eur.format(d.valor)}</b>` +
-    (g > 0.5 ? ` (${eur.format(d.metido)} metidos + ${eur.format(g)} de crecimiento).` : `.`) + ` Toca una barra para ver otro año.`;
+    (g > 0.5 ? ` (${eur.format(d.aportado)} aportados + ${eur.format(g)} de crecimiento).` : `.`) + ` Toca una barra para ver otro año.`;
 }
 
 // ===== Arranque =====
@@ -854,10 +857,10 @@ const SLIDES = [
   "Portada: ¿Qué es un patrimonio protegido? La hucha especial para el futuro de tu hijo o hija con discapacidad.",
   "Una hucha a nombre de tu hijo: dinero y bienes (ahorros, fondos, incluso una vivienda) que pertenecen a la persona con discapacidad y solo se usan para sus necesidades. Lo regula la Ley 41/2003.",
   "¿Quién puede tenerlo? Personas con discapacidad psíquica o intelectual (por ejemplo, autismo) del 33 % o más, o física o sensorial del 65 % o más. A cualquier edad.",
-  "¿Quién puede meter dinero? Madre y padre, abuelos, tíos, hermanos y otros familiares hasta tercer grado, la pareja o los tutores. Cada uno en su propia renta.",
-  "La ventaja: lo que metes se descuenta en la renta, hasta 10.000 € al año por persona y 24.250 € entre todos. Por cada 100 € puedes ahorrarte entre 19 € y 45 €. Tu hijo recibe los 100 € enteros.",
-  "¿Para qué se puede usar? Sí: terapias, psicólogos, apoyos en el colegio, cuidados y material. No: sacarlo para otras cosas durante el año en que se mete y los cuatro siguientes.",
-  "¿Cómo se empieza? Notario, cuenta en el banco solo para la hucha, meter el dinero antes del 31 de diciembre y aplicar la reducción en la renta. En N.A.N.A. te ayudamos."
+  "¿Quién puede aportar dinero? Madre y padre, abuelos, tíos, hermanos y otros familiares hasta tercer grado, la pareja o los tutores. Cada uno en su propia renta.",
+  "La ventaja: lo que aportas se descuenta en la renta, hasta 10.000 € al año por persona y 24.250 € entre todos. Por cada 100 € puedes ahorrarte entre 19 € y 45 €. Tu hijo recibe los 100 € enteros.",
+  "¿Para qué se puede usar? Sí: terapias, psicólogos, apoyos en el colegio, cuidados y material. No: sacarlo para otras cosas durante el año en que se aporta y los cuatro siguientes.",
+  "¿Cómo se empieza? Notario, cuenta en el banco solo para la hucha, aportar el dinero antes del 31 de diciembre y aplicar la reducción en la renta. En N.A.N.A. te ayudamos."
 ];
 // Imágenes exportadas desde Canva (img/info-N.jpg), en orden de lectura. Se usa esto en vez de incrustar
 // el iframe de Canva porque en el móvil el iframe muestra encima sus propios controles (flechas, lupa,
