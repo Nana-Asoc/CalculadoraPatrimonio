@@ -319,9 +319,14 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
 
       <!-- Paso 3 -->
       <div class="step" id="paso3" tabindex="-1">
-        <div class="step-title"><span class="step-n">3</span><h2>Qué hacéis con el dinero dentro</h2></div>
-        <p class="help">El dinero de la hucha puede quedarse quieto en la cuenta o invertirse para que crezca. Elige una opción:</p>
-        <div class="opts" id="opts" role="radiogroup" aria-label="Qué hacéis con el dinero"></div>
+        <div class="step-title"><span class="step-n">3</span><h2>Cómo se guarda el dinero de la hucha</h2></div>
+        <div class="kidbox">
+          <p><b>El dinero es para vuestro hijo o hija y se puede usar cuando lo necesite</b>: terapias, logopeda, psicólogo, apoyos en el colegio, material, cuidados… Todo lo que sea para sus necesidades.</p>
+          <p>Mientras no se gasta, podéis elegir: <b>dejarlo en la cuenta sin invertir</b>, sin hacer nada más, o <b>colocarlo en algún producto</b> para que crezca poco a poco.</p>
+        </div>
+        <p class="help">Elige una opción para ver cómo podría quedar:</p>
+        <div class="opts" id="opts" role="radiogroup" aria-label="Cómo se guarda el dinero de la hucha"></div>
+        <p class="warn"><b>* Los porcentajes son ejemplos imaginarios</b> para hacer la simulación. No son productos ni ofertas reales de ningún banco. Si quieres saber más sobre las opciones, contacta con N.A.N.A.: <a href="mailto:nucli.nana@gmail.com">nucli.nana@gmail.com</a> o <a href="tel:+34694587000">694 58 70 00</a> (también WhatsApp).</p>
         <details class="info">
           <summary>¿De dónde salen estos porcentajes?</summary>
           <div class="body">
@@ -332,7 +337,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
               <li><b>Fondo mixto (≈ 4 %)</b>: mezcla de bolsa y de productos seguros. Es una media aproximada de lo que han dado estos fondos en el pasado.</li>
               <li><b>Fondo de bolsa mundial (≈ 6 %)</b>: invierte en miles de empresas de todo el mundo. A largo plazo, durante décadas, la bolsa mundial ha subido de media entre un 7 % y un 8 % al año; le restamos las comisiones del fondo. Hay años en que baja un 20 % o un 30 %, así que es solo para dinero que no se va a tocar en muchos años.</li>
             </ul>
-            <p>Son <b>medias del pasado</b>, no promesas. Nadie puede asegurar lo que pasará. Por eso la calculadora también te muestra qué pasaría si el resultado fuera la mitad de bueno.</p>
+            <p>Son <b>ejemplos supuestos</b>, basados en medias del pasado, no promesas ni ofertas de ningún banco. Nadie puede asegurar lo que pasará. Por eso la calculadora también te muestra qué pasaría si el resultado fuera la mitad de bueno. Para conocer opciones reales, contacta con N.A.N.A. y te orientamos.</p>
           </div>
         </details>
       </div>
@@ -537,10 +542,10 @@ const CFG = {
   maxPersonas: 5
 };
 const OPCIONES = [
-  { id: "cuenta",  r: 0,    t: "Se queda en la cuenta", d: "Cuenta sin remuneración. Sin riesgo y sin rentabilidad." },
-  { id: "deposito", r: 0.02, t: "Depósito o fondo monetario", d: "Producto de muy bajo riesgo. La rentabilidad depende de los tipos de interés del momento." },
-  { id: "mixto",   r: 0.04, t: "Fondo mixto", d: "Combina renta fija y renta variable. Riesgo medio: algunos años puede bajar." },
-  { id: "bolsa",   r: 0.06, t: "Fondo de bolsa mundial", d: "Renta variable global. Riesgo alto: solo para plazos largos sin tocar el dinero." }
+  { id: "cuenta",  r: 0,    t: "En la cuenta, sin invertir", d: "No se hace nada más con el dinero. Sin riesgo, pero tampoco crece. Disponible para sus gastos cuando haga falta." },
+  { id: "deposito", r: 0.02, t: "Ejemplo: depósito o fondo monetario", d: "Producto de muy bajo riesgo. Lo que paga depende de los tipos de interés del momento." },
+  { id: "mixto",   r: 0.04, t: "Ejemplo: fondo mixto", d: "Combina productos seguros y bolsa. Riesgo medio: algunos años puede bajar." },
+  { id: "bolsa",   r: 0.06, t: "Ejemplo: fondo de bolsa mundial", d: "Riesgo alto: solo para dinero que no se va a necesitar en muchos años." }
 ];
 const QUIEN = ["Madre", "Padre", "Abuela", "Abuelo", "Tía", "Tío", "Hermano/a", "Otra persona"];
 
@@ -671,7 +676,7 @@ function renderOpts() {
     <label class="opt">
       <input type="radio" name="opcion" value="${o.id}"${o.id === opcion ? " checked" : ""}>
       <span class="opt-body">
-        <span class="opt-top"><span>${o.t}</span><span class="pct">${o.r === 0 ? "0 %" : "≈ " + pct(o.r) + " al año"}</span></span>
+        <span class="opt-top"><span>${o.t}</span><span class="pct">${o.r === 0 ? "0 %" : "≈ " + pct(o.r) + " al año*"}</span></span>
         <span class="opt-desc">${o.d}</span>
       </span>
     </label>`).join("");
@@ -751,7 +756,7 @@ function calc() {
   const invertido = op.r > 0;
   $("lineInv").hidden = !invertido; $("linePes").hidden = !invertido; $("legGrowth").hidden = !invertido;
   if (invertido) {
-    $("rInvK").innerHTML = `A los ${fin} años, si se invierte en ${op.t.toLowerCase()}<small>Con un ≈ ${pct(op.r)} al año, sin garantía</small><a href="#paso3" class="jump">Cambiar dónde se invierte</a>`;
+    $("rInvK").innerHTML = `A los ${fin} años, si se invierte en ${op.t.replace(/^Ejemplo: /, "").toLowerCase()}<small>Ejemplo supuesto con un ≈ ${pct(op.r)} al año, sin garantía</small><a href="#paso3" class="jump">Cambiar la opción</a>`;
     $("rInv").textContent = eur.format(finInv);
     $("rPes").textContent = eur.format(finPes);
     $("kidSentence").innerHTML = A > 0
@@ -780,7 +785,7 @@ function calc() {
   if (A > CFG.exencionHijo)
     w.push(`Si aportáis más de unos ${eur.format(CFG.exencionHijo)} al año, vuestro hijo podría tener que pagar impuestos por la parte que sobra. Consultadlo antes.`);
   if (opcion !== "cuenta")
-    w.push(`La rentabilidad (${pct(op.r)} al año) es una estimación orientativa, antes de comisiones. Antes de contratar, revisad con vuestro banco las condiciones reales del producto.`);
+    w.push(`La rentabilidad (${pct(op.r)} al año) es un ejemplo supuesto, no la oferta de ningún banco. Para conocer opciones reales, contactad con N.A.N.A.`);
   if (opcion === "bolsa" && n < 8)
     w.push(`Con menos de 8 años por delante, la bolsa puede pillaros en un mal momento. Para plazos cortos suele elegirse algo más seguro.`);
   $("warns").innerHTML = w.map(t => `<div class="warn">${t}</div>`).join("");
