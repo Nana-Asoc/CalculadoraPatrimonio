@@ -262,6 +262,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
     <span class="eyebrow">N.A.N.A. · Patrimonio protegido</span>
     <h1>Calculadora del patrimonio protegido</h1>
     <p>El patrimonio protegido es como una <b>hucha especial a nombre de tu hijo o hija con discapacidad</b>. El dinero que aportas en ella es suyo, para sus necesidades, y a cambio Hacienda te devuelve una parte en la declaración de la renta. Responde a tres preguntas y verás cuánto te ahorras y cuánto dinero tendrá tu hijo.</p>
+    <p class="help">N.A.N.A. solo explica cómo funciona: no aconseja ni ofrece ningún producto ni paquete financiero.</p>
     <button type="button" class="info-btn" id="infoBtn" aria-haspopup="dialog">
       <span class="info-i" aria-hidden="true">i</span>
       <span><b>¿Es la primera vez que oyes hablar de esto?</b><small>Mira en 1 minuto qué es un patrimonio protegido</small></span>
@@ -327,7 +328,7 @@ details.plain > summary { cursor: pointer; font-weight: 700; min-height: 32px; }
         <p class="help">Elige una opción para ver cómo podría quedar:</p>
         <div class="opts" id="opts" role="radiogroup" aria-label="Cómo se guarda el dinero de la hucha"></div>
         <details class="info">
-          <summary>* Sobre estos porcentajes</summary>
+          <summary>Sobre estos porcentajes</summary>
           <div class="body">
             <p><b>Los porcentajes son ejemplos imaginarios</b> para hacer la simulación. No son productos ni ofertas reales de ningún banco. Si quieres saber más sobre las opciones, contacta con N.A.N.A.: <a href="mailto:nucli.nana@gmail.com">nucli.nana@gmail.com</a> o <a href="tel:+34694587000">694 58 70 00</a> (también WhatsApp).</p>
             <p>La <b>rentabilidad</b> es cuánto crece el dinero cada año. Si aportas 100 € y la rentabilidad es del 4 %, al año siguiente tienes 104 €. Al año siguiente crece también lo ganado, y por eso el efecto aumenta con los años.</p>
@@ -676,7 +677,7 @@ function renderOpts() {
     <label class="opt">
       <input type="radio" name="opcion" value="${o.id}"${o.id === opcion ? " checked" : ""}>
       <span class="opt-body">
-        <span class="opt-top"><span>${o.t}</span><span class="pct">${o.r === 0 ? "0 %" : "≈ " + pct(o.r) + " al año*"}</span></span>
+        <span class="opt-top"><span>${o.t}</span><span class="pct">${o.r === 0 ? "0 %" : "≈ " + pct(o.r) + " al año"}</span></span>
         <span class="opt-desc">${o.d}</span>
       </span>
     </label>`).join("");
@@ -756,7 +757,7 @@ function calc() {
   const invertido = op.r > 0;
   $("lineInv").hidden = !invertido; $("linePes").hidden = !invertido; $("legGrowth").hidden = !invertido;
   if (invertido) {
-    $("rInvK").innerHTML = `A los ${fin} años, si se invierte en ${op.t.replace(/^Ejemplo: /, "").toLowerCase()}<small>Ejemplo supuesto con un ≈ ${pct(op.r)} al año, sin garantía</small><a href="#paso3" class="jump">Cambiar la opción</a>`;
+    $("rInvK").innerHTML = `A los ${fin} años, si se invierte en ${op.t.replace(/^Ejemplo: /, "").toLowerCase()}<small>Ejemplo supuesto con un ≈ ${pct(op.r)} al año, sin garantía</small><a href="#paso3" class="jump">Cambiar la opción de inversión</a>`;
     $("rInv").textContent = eur.format(finInv);
     $("rPes").textContent = eur.format(finPes);
     $("kidSentence").innerHTML = A > 0
